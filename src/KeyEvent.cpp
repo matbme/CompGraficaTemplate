@@ -1,5 +1,6 @@
-#import "KeyEvent.h"
+#include "KeyEvent.h"
 
-KeyEvent::KeyEvent () {
-    keys.fill (KeyStatus::UNPRESSED);
-}
+KeyEvent::KeyEvent () {}
+KeyEvent::~KeyEvent () {}
+
+std::array <KeyEvent::KeyStatus, 1024> KeyEvent::keys = { KeyEvent::KeyStatus::UNPRESSED };

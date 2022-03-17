@@ -12,7 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // GLFW
-#include <GLFW/glfw3.h>
+// #include <GLFW/glfw3.h>
 
 // Local
 #include "Shader.h"
@@ -42,7 +42,7 @@ public:
 	unsigned int loadTexture (std::string filename); 
 
     // Input
-    static KeyEvent *key_event;
+    // static std::array <KeyEvent::KeyStatus, 1024>* keys;
 	static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mode);
 
 private:
@@ -50,12 +50,16 @@ private:
     GLFWwindow *window;
     static bool window_resized;
 
+    // Dimensoes da janela
+    GLuint window_width;
+    GLuint window_height;
+
     // Programa de shader, presumindo um unico par de shaders
     Shader *shader;
 
     // Camera
-    glm::vec4 model;
-    glm::vec4 view;
+    glm::mat4 model;
+    glm::mat4 view;
     glm::mat4 projection;
 
     // Objetos na cena

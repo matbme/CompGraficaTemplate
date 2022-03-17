@@ -62,6 +62,23 @@ void Object::setTexture (int texID)
 	this->texID = texID;
 }
 
+void Object::setShader (Shader* shader) {
+    this->shader = shader;
+    shader->Use ();
+}
+
+void Object::setPosition (glm::vec3 pos) {
+    this->pos = pos;
+}
+
+void Object::setDimension (glm::vec3 scale) {
+    this->scale = scale;
+}
+
+void Object::setAngle (float angle) {
+    this->angle = angle;
+}
+
 void Object::setRotation (float angle, glm::vec3 axis, bool reset)
 {
 	if (reset) transform = glm::mat4 (1);
