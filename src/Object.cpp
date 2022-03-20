@@ -1,32 +1,40 @@
 #include "Object.h"
 
 Object::Object () {
-    float vertices[] = {
-        // positions          // colors           // texture coords
+GLfloat vertices[] = {
+//       x     y     z     r    g    b
 
-        // bottom
-         0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0, // top right
-         0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,  // top left 
+        // base
+        -0.5, -0.5, -0.5, 1.0, 1.0, 0.0, // A - 0
+        -0.5, -0.5,  0.5, 0.0, 1.0, 1.0, // B - 1
+         0.5, -0.5, -0.5, 1.0, 0.0, 1.0, // C - 2
+         0.5, -0.5,  0.5, 1.0, 0.0, 1.0, // D - 3
 
-        // top
-         0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0, // top right
-         0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,  // top left 
-    };
+        // topo
+        -0.5,  0.5, -0.5, 1.0, 1.0, 0.0, // E - 4
+        -0.5,  0.5,  0.5, 0.0, 1.0, 1.0, // F - 5
+         0.5,  0.5, -0.5, 1.0, 0.0, 1.0, // G - 6
+         0.5,  0.5,  0.5, 1.0, 0.0, 1.0, // H - 7
+	};
     unsigned int indices[] = {
-        // bottom
-        0, 1, 3, // first triangle
-        1, 2, 3, // second triangle
-
-        // top
-        4, 5, 7, // first triangle
-        5, 6, 7, // second triangle
+        // base
+        0, 1, 2,
+        1, 2, 3,
+        // topo
+        4, 5, 6,
+        5, 6, 7,
+        // faces
+        1, 3, 5,
+        3, 5, 7,
+        0, 1, 4,
+        1, 4, 5,
+        0, 2, 4,
+        2, 4, 6,
+        2, 3, 6,
+        3, 6, 7,
     };
 
-    unsigned int VBO, EBO;
+	unsigned int VBO, EBO;
     glGenVertexArrays (1, &VAO);
     glGenBuffers (1, &VBO);
     glGenBuffers (1, &EBO);
@@ -40,80 +48,34 @@ Object::Object () {
     glBufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof (indices), indices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof (float), (void*) 0);
+    glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof (float), (void*) 0);
     glEnableVertexAttribArray (0);
     // color attribute
-    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof (float), (void*) (3 * sizeof (float)));
+    glVertexAttribPointer (1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof (float), (void*) (3 * sizeof (float)));
     glEnableVertexAttribArray (1);
-    // texture coord attribute
-    glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof (float), (void*) (6 * sizeof (float)));
-    glEnableVertexAttribArray (2);
 
-    transform = glm::mat4 (1); //matriz identidade
-    texID = -1; //ainda não temos
+    model = glm::mat4 (1); //matriz identidade
+    // texID = -1; //ainda não temos
     shader = NULL; //ainda não temos
     pos = glm::vec3 (0.0f, 0.0f, 0.0f);
     scale = glm::vec3 (1.0f, 1.0f, 1.0f);
     angle = 0.0f;
 }
 
-void Object::setTexture (int texID)
-{
-	this->texID = texID;
-}
+void Object::setTexture (int texID) { this->texID = texID; }
 
 void Object::setShader (Shader* shader) {
     this->shader = shader;
     shader->Use ();
 }
 
-void Object::setPosition (glm::vec3 pos) {
-    this->pos = pos;
-}
-
-void Object::setDimension (glm::vec3 scale) {
-    this->scale = scale;
-}
-
-void Object::setAngle (float angle) {
-    this->angle = angle;
-}
-
-void Object::setRotation (float angle, glm::vec3 axis, bool reset)
-{
-	if (reset) transform = glm::mat4 (1);
-	transform = glm::rotate (transform, angle, axis);
-}
-
-void Object::setTranslation (glm::vec3 displacements, bool reset)
-{
-	if (reset) transform = glm::mat4 (1);
-	transform = glm::translate (transform, displacements);
-}
-
-void Object::setScale (glm::vec3 scaleFactors, bool reset)
-{
-	if (reset) transform = glm::mat4 (1);
-	transform = glm::scale (transform, scaleFactors);
-	scale = scaleFactors;
-}
-
-void Object::draw()
-{
-	glBindTexture (GL_TEXTURE_2D, texID);
-	glUniform1i (glGetUniformLocation (shader->ID, "ourTexture1"), 0);
-
+void Object::draw () {
 	glBindVertexArray (VAO);
-	glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawElements (GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 	glBindVertexArray (0);
 }
 
-void Object::update()
-{
-	setTranslation (pos);
-	setRotation (angle, glm::vec3 (0.0f, 0.0f, 1.0f), false);
-	setScale (scale, false);
-
-	GLint transformLoc = glGetUniformLocation (shader->ID, "model");
-	glUniformMatrix4fv (transformLoc, 1, GL_FALSE, glm::value_ptr (transform));
+void Object::update () {
+	GLint modelLoc = glGetUniformLocation (shader->ID, "model");
+	glUniformMatrix4fv (modelLoc, 1, GL_FALSE, glm::value_ptr (model));
 }

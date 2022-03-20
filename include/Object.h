@@ -15,9 +15,6 @@ public:
     // Set Atributos
     void setTexture (int texID);
     void setShader (Shader *shader);
-    void setPosition (glm::vec3 pos);
-    void setDimension (glm::vec3 scale);
-    void setAngle (float angle);
 
     // Get Atributos
     unsigned int getTexID ();
@@ -27,9 +24,19 @@ public:
     float getAngle ();
 
     // Para controle direto da matriz de transformacoes
-	void setRotation(float angle, glm::vec3 axis, bool reset = true);
-	void setTranslation(glm::vec3 displacements, bool reset = true);
-	void setScale(glm::vec3 scaleFactors, bool reset = true);
+	inline void setRotation(float angle, glm::vec3 axis, bool reset = false) {
+        if (reset) model = glm::mat4 (1);
+        model = glm::rotate (model, angle, axis);
+    }
+	inline void setTranslation(glm::vec3 displacements, bool reset = false) {
+        if (reset) model = glm::mat4 (1);
+        model = glm::translate (model, displacements);
+    }
+	inline void setScale(glm::vec3 scaleFactors, bool reset = false) {
+        if (reset) model = glm::mat4 (1);
+        model = glm::scale (model, scaleFactors);
+        scale = scaleFactors;
+    }
 
     // Gerenciamento
     void draw ();
@@ -37,7 +44,7 @@ public:
 
 protected:
     GLuint VAO; // ID buffer de geometria 
-    glm::mat4 transform; // Matrix de transformacao
+    glm::mat4 model; // Matrix de transformacao
     
     unsigned int texID; // ID da textura
     Shader *shader; // ponteiro para objeto de shader

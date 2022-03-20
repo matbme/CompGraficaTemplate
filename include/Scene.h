@@ -51,8 +51,8 @@ private:
     static bool window_resized;
 
     // Dimensoes da janela
-    GLuint window_width;
-    GLuint window_height;
+    static GLuint window_width;
+    static GLuint window_height;
 
     // Programa de shader, presumindo um unico par de shaders
     Shader *shader;
@@ -61,6 +61,14 @@ private:
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
+
+    GLint modelLoc;
+    GLint viewLoc;
+    GLint projLoc;
+
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
     // Objetos na cena
     std::vector <Object*> objects;
