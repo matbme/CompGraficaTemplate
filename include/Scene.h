@@ -21,7 +21,7 @@
 
 class Scene {
 public:
-    Scene (GLuint width, GLuint height);
+    Scene (GLuint width, GLuint height, std::string window_name);
     ~Scene ();
 
     // Atualiza viewport e dimensoes
@@ -32,12 +32,12 @@ public:
 	void finish ();
 
     // Gerenciamento do runtime
-    void update ();
+    virtual void update ();
     void render ();
 
     // Import de elementos na cena
 	void addShaders (std::string vertex_path, std::string frag_path);
-	void setupScene ();
+	virtual void setupScene ();
 	void setupCamera ();
 	unsigned int loadTexture (std::string filename); 
 
@@ -65,10 +65,6 @@ private:
     GLint modelLoc;
     GLint viewLoc;
     GLint projLoc;
-
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
     // Objetos na cena
     std::vector <Object*> objects;

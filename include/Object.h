@@ -44,7 +44,7 @@ public:
 
 protected:
     GLuint VAO; // ID buffer de geometria 
-    glm::mat4 model; // Matrix de transformacao
+    glm::mat4 model; // Matriz de transformacao
     
     unsigned int texID; // ID da textura
     Shader *shader; // ponteiro para objeto de shader
@@ -52,6 +52,11 @@ protected:
     // Atributos visuais do objeto
     glm::vec3 pos, scale;
     float angle;
+
+private:
+    // Vertices da geometria e indices passados para a EBO
+    static const GLfloat vertices[];
+    static const unsigned int indices[];
 };
 
 #endif

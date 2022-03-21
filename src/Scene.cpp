@@ -8,7 +8,7 @@ bool Scene::window_resized = false;
 GLuint Scene::window_width = 0;
 GLuint Scene::window_height = 0;
 
-Scene::Scene (GLuint width, GLuint height) {
+Scene::Scene (GLuint width, GLuint height, std::string window_name) {
     glfwInit ();
 
 	glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -23,7 +23,7 @@ Scene::Scene (GLuint width, GLuint height) {
     Scene::window_height = height;
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	window = glfwCreateWindow (width, height, "CompGraficaTemplate", nullptr, nullptr);
+	window = glfwCreateWindow (width, height, window_name.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent (window);
 
     // Set the required callback functions

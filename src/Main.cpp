@@ -8,10 +8,7 @@
 #include "Scene.h"
 
 int main () {
-    Scene *main_scene = new Scene (1920, 1080);
-
-    KeyEvent *main_scene_key_event = new KeyEvent ();
-    // Scene::keys = &KeyEvent::keys;
+    Scene *main_scene = new Scene (1920, 1080, "template");
 
     main_scene->run ();
     main_scene->finish();

@@ -1,39 +1,40 @@
 #include "Object.h"
 
-Object::Object () {
-GLfloat vertices[] = {
+const GLfloat Object::vertices[] = {
 //       x     y     z     r    g    b
 
-        // base
-        -0.5, -0.5, -0.5, 1.0, 1.0, 0.0, // A - 0
-        -0.5, -0.5,  0.5, 0.0, 1.0, 1.0, // B - 1
-         0.5, -0.5, -0.5, 1.0, 0.0, 1.0, // C - 2
-         0.5, -0.5,  0.5, 1.0, 0.0, 1.0, // D - 3
+    // base
+    -0.5, -0.5, -0.5, 1.0, 1.0, 0.0, // A - 0
+    -0.5, -0.5,  0.5, 0.0, 1.0, 1.0, // B - 1
+     0.5, -0.5, -0.5, 1.0, 0.0, 1.0, // C - 2
+     0.5, -0.5,  0.5, 1.0, 0.0, 1.0, // D - 3
 
-        // topo
-        -0.5,  0.5, -0.5, 1.0, 1.0, 0.0, // E - 4
-        -0.5,  0.5,  0.5, 0.0, 1.0, 1.0, // F - 5
-         0.5,  0.5, -0.5, 1.0, 0.0, 1.0, // G - 6
-         0.5,  0.5,  0.5, 1.0, 0.0, 1.0, // H - 7
-	};
-    unsigned int indices[] = {
-        // base
-        0, 1, 2,
-        1, 2, 3,
-        // topo
-        4, 5, 6,
-        5, 6, 7,
-        // faces
-        1, 3, 5,
-        3, 5, 7,
-        0, 1, 4,
-        1, 4, 5,
-        0, 2, 4,
-        2, 4, 6,
-        2, 3, 6,
-        3, 6, 7,
-    };
+    // topo
+    -0.5,  0.5, -0.5, 1.0, 1.0, 0.0, // E - 4
+    -0.5,  0.5,  0.5, 0.0, 1.0, 1.0, // F - 5
+     0.5,  0.5, -0.5, 1.0, 0.0, 1.0, // G - 6
+     0.5,  0.5,  0.5, 1.0, 0.0, 1.0, // H - 7
+};
 
+const unsigned int Object::indices[] = {
+    // base
+    0, 1, 2,
+    1, 2, 3,
+    // topo
+    4, 5, 6,
+    5, 6, 7,
+    // faces
+    1, 3, 5,
+    3, 5, 7,
+    0, 1, 4,
+    1, 4, 5,
+    0, 2, 4,
+    2, 4, 6,
+    2, 3, 6,
+    3, 6, 7,
+};
+
+Object::Object () {
 	unsigned int VBO, EBO;
     glGenVertexArrays (1, &VAO);
     glGenBuffers (1, &VBO);
@@ -71,7 +72,7 @@ void Object::setShader (Shader* shader) {
 
 void Object::draw () {
 	glBindVertexArray (VAO);
-	glDrawElements (GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glDrawElements (GL_TRIANGLES, sizeof (indices) / sizeof (unsigned int), GL_UNSIGNED_INT, 0);
 	glBindVertexArray (0);
 }
 
