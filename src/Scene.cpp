@@ -73,28 +73,28 @@ void Scene::update () {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
     if (KEYPRESS (GLFW_KEY_X)) {
-        for (Object* obj : objects)
+        for (auto obj : objects)
             obj->setRotation(glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
     }
 
     if (KEYPRESS (GLFW_KEY_Y)) {
-        for (Object* obj : objects)
+        for (auto obj : objects)
             obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
     }
 
     if (KEYPRESS (GLFW_KEY_Z)) {
-        for (Object* obj : objects)
+        for (auto obj : objects)
             obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
     }
 
     if (KEYPRESS (GLFW_KEY_MINUS)) {
-        for (Object* obj : objects)
+        for (auto obj : objects)
             obj->setScale (glm::vec3 (0.9f, 0.9f, 0.9f));
         KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
     }
 
     if ((KEYPRESS (GLFW_KEY_LEFT_SHIFT) || KEYPRESS (GLFW_KEY_RIGHT_SHIFT)) && KEYPRESS (GLFW_KEY_EQUAL)) {
-        for (Object* obj : objects)
+        for (auto obj : objects)
             obj->setScale (glm::vec3 (1.1f, 1.1f, 1.1f));
         KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
     }
@@ -109,7 +109,7 @@ void Scene::render () {
         Scene::window_resized = false;
     }
 
-    for (Object* obj : objects) {
+    for (auto obj : objects) {
         obj->update ();
         obj->draw ();
     }
@@ -129,16 +129,17 @@ void Scene::finish () {
 }
 
 void Scene::setupScene () {
-    Object* cube = new Object ();
+    Object<Cube>* cube = new Object<Cube> ();
+    std::cout << "Setting shader" << std::endl;
     cube->setShader(shader);
     cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
 
-    Object* cube2 = new Object ();
-    cube2->setShader(shader);
-    cube2->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
+    Object<Floor>* floor = new Object<Floor> ();
+    floor->setShader(shader);
+    floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
 
-    objects.push_back(cube);
-    objects.push_back(cube2);
+    objects.push_back((Object<Shape> *) cube);
+    objects.push_back((Object<Shape> *) floor);
 }
 
 void Scene::setupCamera () {

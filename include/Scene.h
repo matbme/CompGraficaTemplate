@@ -5,19 +5,21 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 // GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// GLFW
-// #include <GLFW/glfw3.h>
-
 // Local
 #include "Shader.h"
 #include "Object.h"
 #include "KeyEvent.h"
+
+#include "Shape.h"
+#include "Cube.h"
+#include "Floor.h"
 
 class Scene {
 public:
@@ -67,7 +69,7 @@ private:
     GLint projLoc;
 
     // Objetos na cena
-    std::vector <Object*> objects;
+    std::vector<Object<Shape>*> objects;
 };
 
 #endif
