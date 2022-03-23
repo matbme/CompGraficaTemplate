@@ -2,8 +2,6 @@
 #include "KeyEvent.h"
 #include <GLFW/glfw3.h>
 
-#define KEYPRESS(key) KeyEvent::keys[key] == KeyEvent::PRESSED
-
 bool Scene::window_resized = false;
 GLuint Scene::window_width = 0;
 GLuint Scene::window_height = 0;
@@ -39,8 +37,6 @@ Scene::Scene (GLuint width, GLuint height, std::string window_name) {
     // Build and compile our shader program
     addShaders ("shaders/template.vs", "shaders/template.fs");
 
-    setupScene ();
-
     Scene::window_resized = true;
 }
 
@@ -68,38 +64,6 @@ void Scene::resize (GLFWwindow * window, int w, int h) {
 	glViewport (0, 0, w, h);
 }
 
-void Scene::update () {
-	if (KEYPRESS (GLFW_KEY_ESCAPE))
-		glfwSetWindowShouldClose(window, GL_TRUE);
-
-    if (KEYPRESS (GLFW_KEY_X)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
-    }
-
-    if (KEYPRESS (GLFW_KEY_Y)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
-    }
-
-    if (KEYPRESS (GLFW_KEY_Z)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
-    }
-
-    if (KEYPRESS (GLFW_KEY_MINUS)) {
-        for (auto obj : objects)
-            obj->setScale (glm::vec3 (0.9f, 0.9f, 0.9f));
-        KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
-    }
-
-    if ((KEYPRESS (GLFW_KEY_LEFT_SHIFT) || KEYPRESS (GLFW_KEY_RIGHT_SHIFT)) && KEYPRESS (GLFW_KEY_EQUAL)) {
-        for (auto obj : objects)
-            obj->setScale (glm::vec3 (1.1f, 1.1f, 1.1f));
-        KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
-    }
-}
-
 void Scene::render () {
     glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -116,6 +80,7 @@ void Scene::render () {
 }
 
 void Scene::run () {
+    setupScene ();
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents ();
         update ();
@@ -126,19 +91,6 @@ void Scene::run () {
 
 void Scene::finish () {
     glfwTerminate ();
-}
-
-void Scene::setupScene () {
-    Object<BasicShapes::Cube>* cube = new Object<BasicShapes::Cube> ();
-    cube->setShader(shader);
-    cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
-
-    Object<BasicShapes::Floor>* floor = new Object<BasicShapes::Floor> ();
-    floor->setShader(shader);
-    floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
-
-    push_object (cube);
-    push_object (floor);
 }
 
 void Scene::setupCamera () {
@@ -163,9 +115,4 @@ void Scene::setupCamera () {
     glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
 
 	glEnable (GL_DEPTH_TEST);
-}
-
-template <class T>
-void Scene::push_object (Object<T> *obj) {
-    objects.push_back ((Object<Shape> *) obj);
 }

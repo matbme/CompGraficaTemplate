@@ -5,10 +5,10 @@
  */
 
 #include "KeyEvent.h"
-#include "Scene.h"
+#include "Scenes/MainScene.h"
 
 int main () {
-    Scene *main_scene = new Scene (1920, 1080, "template");
+    MainScene *main_scene = new MainScene (1920, 1080, "template");
 
     main_scene->run ();
     main_scene->finish();
