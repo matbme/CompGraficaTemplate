@@ -3,6 +3,7 @@
 
 #include <GLFW/glfw3.h>
 
+namespace BasicShapes {
 class Cube {
 public:
     static constexpr GLfloat vertices[] = {
@@ -46,5 +47,5 @@ public:
         return sizeof (indices);
     }
 };
-
+}
 #endif

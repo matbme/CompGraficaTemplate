@@ -129,17 +129,16 @@ void Scene::finish () {
 }
 
 void Scene::setupScene () {
-    Object<Cube>* cube = new Object<Cube> ();
-    std::cout << "Setting shader" << std::endl;
+    Object<BasicShapes::Cube>* cube = new Object<BasicShapes::Cube> ();
     cube->setShader(shader);
     cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
 
-    Object<Floor>* floor = new Object<Floor> ();
+    Object<BasicShapes::Floor>* floor = new Object<BasicShapes::Floor> ();
     floor->setShader(shader);
     floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
 
-    objects.push_back((Object<Shape> *) cube);
-    objects.push_back((Object<Shape> *) floor);
+    push_object (cube);
+    push_object (floor);
 }
 
 void Scene::setupCamera () {
@@ -164,4 +163,9 @@ void Scene::setupCamera () {
     glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
 
 	glEnable (GL_DEPTH_TEST);
+}
+
+template <class T>
+void Scene::push_object (Object<T> *obj) {
+    objects.push_back ((Object<Shape> *) obj);
 }

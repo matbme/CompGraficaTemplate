@@ -1,4 +1,4 @@
-#include "Floor.h"
+#include "BasicShapes/Floor.h"
 
-constexpr GLfloat Floor::vertices[];
-constexpr unsigned int Floor::indices[];
+constexpr GLfloat BasicShapes::Floor::vertices[];
+constexpr unsigned int BasicShapes::Floor::indices[];

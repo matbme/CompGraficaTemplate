@@ -1,4 +1,4 @@
-#include "Cube.h"
+#include "BasicShapes/Cube.h"
 
-constexpr GLfloat Cube::vertices[];
-constexpr unsigned int Cube::indices[];
+constexpr GLfloat BasicShapes::Cube::vertices[];
+constexpr unsigned int BasicShapes::Cube::indices[];

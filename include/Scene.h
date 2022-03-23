@@ -18,8 +18,8 @@
 #include "KeyEvent.h"
 
 #include "Shape.h"
-#include "Cube.h"
-#include "Floor.h"
+#include "BasicShapes/Cube.h"
+#include "BasicShapes/Floor.h"
 
 class Scene {
 public:
@@ -70,6 +70,9 @@ private:
 
     // Objetos na cena
     std::vector<Object<Shape>*> objects;
+    
+    template <class T>
+    void push_object (Object<T> *obj);
 };
 
 #endif

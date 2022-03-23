@@ -3,6 +3,7 @@
 
 #include <GLFW/glfw3.h>
 
+namespace BasicShapes {
 class Floor {
 public:
     static constexpr GLfloat vertices[] = {
@@ -28,5 +29,6 @@ public:
         return sizeof (indices);
     }
 };
+}
 
 #endif
