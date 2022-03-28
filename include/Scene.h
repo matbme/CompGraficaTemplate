@@ -43,9 +43,10 @@ public:
 	void setupCamera ();
 	unsigned int loadTexture (std::string filename); 
 
-    // Input
-    // static std::array <KeyEvent::KeyStatus, 1024>* keys;
+    // Callbacks de input
 	static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mode);
+    static void mouse_callback (GLFWwindow *window, double xpos, double ypos);
+    static void scroll_callback (GLFWwindow* window, double xoffset, double yoffset);
 
 protected:
     // Janela, presumindo uma unica janela
@@ -59,7 +60,7 @@ protected:
     // Programa de shader, presumindo um unico par de shaders
     Shader *shader;
 
-    // Camera
+    // Parameteros do shader
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
@@ -68,10 +69,18 @@ protected:
     GLint viewLoc;
     GLint projLoc;
 
+    // Camera
+    static bool cameraUpdated;
+    static glm::vec3 cameraPos, cameraFront, cameraUp;
+    static float lastX, lastY;
+    static float yaw, pitch, roll;
+    static float fov;
+    static constexpr float cameraSpeed = 0.05f;
+
     // Objetos na cena
     std::vector<Object<Shape>*> objects;
 
-    static const bool keypress (int key) {
+    static inline const bool key_is_pressed (int key) {
         return KeyEvent::keys[key] == KeyEvent::PRESSED;
     }
     
