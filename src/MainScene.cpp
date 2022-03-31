@@ -5,23 +5,23 @@ void MainScene::update () {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
     if (key_is_pressed (GLFW_KEY_W)) {
-        cameraPos += cameraSpeed * cameraFront;
-        cameraUpdated = true;
+        cam->cameraPos += cam->cameraSpeed * cam->cameraFront;
+        cam->cameraUpdated = true;
     }
 
     if (key_is_pressed (GLFW_KEY_S)) {
-        cameraPos -= cameraSpeed * cameraFront;
-        cameraUpdated = true;
+        cam->cameraPos -= cam->cameraSpeed * cam->cameraFront;
+        cam->cameraUpdated = true;
     }
 
     if (key_is_pressed (GLFW_KEY_A)) {
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        cameraUpdated = true;
+        cam->cameraPos -= glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * cam->cameraSpeed;
+        cam->cameraUpdated = true;
     }
 
     if (key_is_pressed (GLFW_KEY_D)) {
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        cameraUpdated = true;
+        cam->cameraPos += glm::normalize(glm::cross(cam->cameraFront, cam->cameraUp)) * cam->cameraSpeed;
+        cam->cameraUpdated = true;
     }
 
     if (key_is_pressed (GLFW_KEY_X)) {
@@ -52,18 +52,18 @@ void MainScene::update () {
     }
 
     if (key_is_pressed (GLFW_KEY_LEFT_SHIFT)) {
-        cameraPos += cameraSpeed * cameraUp;
-        cameraUpdated = true;
+        cam->cameraPos += cam->cameraSpeed * cam->cameraUp;
+        cam->cameraUpdated = true;
     }
 
     if (key_is_pressed (GLFW_KEY_LEFT_CONTROL)) {
-        cameraPos -= cameraSpeed * cameraUp;
-        cameraUpdated = true;
+        cam->cameraPos -= cam->cameraSpeed * cam->cameraUp;
+        cam->cameraUpdated = true;
     }
 
-    if (cameraUpdated) {
-        view = glm::lookAt (cameraPos, cameraPos+cameraFront, cameraUp);
-        projection = glm::perspective(glm::radians(fov), (GLfloat) Scene::window_width / (GLfloat) Scene::window_height, 0.1f, 100.0f);  
+    if (cam->changed ()) {
+        view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
+        projection = glm::perspective(glm::radians(cam->fov), (GLfloat) Scene::window_width / (GLfloat) Scene::window_height, 0.1f, 100.0f);  
 
         glUniformMatrix4fv (viewLoc, 1, GL_FALSE, glm::value_ptr (view));
         glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
@@ -79,7 +79,7 @@ void MainScene::setupScene () {
     floor->setShader(shader);
     floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
 
-    view = glm::lookAt (cameraPos, cameraPos+cameraFront, cameraUp);
+    view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
 
     push_object (cube);
     push_object (floor);

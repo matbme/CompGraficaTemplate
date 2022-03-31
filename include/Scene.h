@@ -16,6 +16,7 @@
 #include "Shader.h"
 #include "Object.h"
 #include "KeyEvent.h"
+#include "Camera.h"
 
 #include "Shape.h"
 #include "BasicShapes/Cube.h"
@@ -45,8 +46,6 @@ public:
 
     // Callbacks de input
 	static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mode);
-    static void mouse_callback (GLFWwindow *window, double xpos, double ypos);
-    static void scroll_callback (GLFWwindow* window, double xoffset, double yoffset);
 
 protected:
     // Janela, presumindo uma unica janela
@@ -70,12 +69,7 @@ protected:
     GLint projLoc;
 
     // Camera
-    static bool cameraUpdated;
-    static glm::vec3 cameraPos, cameraFront, cameraUp;
-    static float lastX, lastY;
-    static float yaw, pitch, roll;
-    static float fov;
-    static constexpr float cameraSpeed = 0.05f;
+    std::shared_ptr<Camera> cam;
 
     // Objetos na cena
     std::vector<Object<Shape>*> objects;

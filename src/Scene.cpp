@@ -6,18 +6,6 @@ bool Scene::window_resized = false;
 GLuint Scene::window_width = 0;
 GLuint Scene::window_height = 0;
 
-glm::vec3 Scene::cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 Scene::cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 Scene::cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-float Scene::fov = 35.0f;
-
-float Scene::lastX = MAXFLOAT;
-float Scene::lastY = MAXFLOAT;
-float Scene::yaw = 0.0f;
-float Scene::pitch = 0.0f;
-float Scene::roll = 0.0f;
-bool Scene::cameraUpdated = false;
-
 Scene::Scene (GLuint width, GLuint height, std::string window_name) {
     glfwInit ();
 
@@ -32,6 +20,10 @@ Scene::Scene (GLuint width, GLuint height, std::string window_name) {
     Scene::window_width = width;
     Scene::window_height = height;
 
+    // Creates a new camera which will be our eye and binds it to mouse and scroll callbacks
+    this->cam = std::make_shared<Camera>();
+    Camera::bind_instance (cam);
+
 	// Create a GLFWwindow object that we can use for GLFW's functions
 	window = glfwCreateWindow (width, height, window_name.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent (window);
@@ -41,8 +33,8 @@ Scene::Scene (GLuint width, GLuint height, std::string window_name) {
 
     // Set the required callback functions
     glfwSetKeyCallback (window, key_callback);
-    glfwSetCursorPosCallback (window, Scene::mouse_callback);
-    glfwSetScrollCallback (window, Scene::scroll_callback);
+    glfwSetCursorPosCallback (window, Camera::mouse_callback);
+    glfwSetScrollCallback (window, Camera::scroll_callback);
 
     // Setando a callback de redimensionamento da janela
     glfwSetWindowSizeCallback (window, resize);
@@ -132,42 +124,4 @@ void Scene::setupCamera () {
     glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
 
 	glEnable (GL_DEPTH_TEST);
-}
-
-void Scene::mouse_callback (GLFWwindow* window, double xpos, double ypos) {
-    if (lastX == MAXFLOAT || lastY == MAXFLOAT) {
-        lastX = xpos;
-        lastY = ypos;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; 
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw   += xoffset;
-    pitch += yoffset;
-
-    if (pitch > 89.0f) pitch = 89.0f;
-    if (pitch < -89.0f) pitch = -89.0f;
-
-    glm::vec3 new_front;
-    new_front.x = cos (glm::radians (yaw)) * cos (glm::radians (pitch));
-    new_front.y = sin (glm::radians (pitch));
-    new_front.z = sin (glm::radians(yaw)) * cos (glm::radians (pitch));
-    cameraFront = glm::normalize (new_front);
-
-    cameraUpdated = true;
-}
-
-void Scene::scroll_callback (GLFWwindow *window, double xoffset, double yoffset) {
-    if (fov >= 1.0f && fov <= 45.0f) fov -= yoffset;
-    if (fov <= 1.0f) fov = 1.0f;
-    if (fov >= 45.0f) fov = 45.0f;
-
-    cameraUpdated = true;
 }
