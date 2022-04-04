@@ -50,10 +50,14 @@ void Mesh::draw (Shader &shader) {
 
         textureType_number[texture.type]++;
 
-        shader.setFloat(("material." + 
-                         TextureType_toString (texture.type) + 
-                         std::to_string (textureType_number[texture.type])), 
-                        texture_number - GL_TEXTURE0);
+        shader.setFloat(
+            ("material." + 
+            TextureType_toString (texture.type) + 
+            std::to_string (textureType_number[texture.type])
+            ).c_str (), 
+            texture_number - GL_TEXTURE0
+        );
+
         glBindTexture (GL_TEXTURE_2D, texture.id);
     }
     glActiveTexture (GL_TEXTURE0);
