@@ -12,9 +12,9 @@ file(GLOB SRC_FILES_C src/*.c)
 
 add_executable(app ${SRC_FILES} ${SRC_FILES_C})
 
-# C++11 standard
+# C++17 standard
 set_target_properties(app PROPERTIES
-    CXX_STANDARD 11
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED TRUE
     CXX_EXTENSIONS TRUE
 )
