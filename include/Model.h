@@ -8,11 +8,17 @@
 
 class Model {
 public:
-    Model (std::string path);
+    Model ();
     void draw (Shader &shader);
-private:
     std::vector<Mesh> meshes;
-    std::string directory;
+
+    std::vector<std::shared_ptr<glm::vec3>> unique_vertex_pos;
+    std::vector<std::shared_ptr<glm::vec3>> unique_vertex_norm;
+    std::vector<std::shared_ptr<glm::vec2>> unique_vertex_tex;
+
+    unsigned int unique_vertex_pos_offset = 0;
+    unsigned int unique_vertex_norm_offset = 0;
+    unsigned int unique_vertex_tex_offset = 0;
 };
 
 #endif

@@ -6,6 +6,8 @@ constexpr unsigned int hash(const char* str, int h = 0) {
 }
 
 std::unique_ptr<Model> ModelImporter::fromObj (std::string const &path) {
+    std::unique_ptr<Model> ret_model = std::make_unique<Model>();
+
     std::ifstream file (path);
 
     std::string line;
@@ -18,7 +20,6 @@ std::unique_ptr<Model> ModelImporter::fromObj (std::string const &path) {
                    std::istream_iterator<std::string>(),
                    std::back_inserter(tokens));
 
-        // for (auto tok : tokens) std::cout << tok << std::endl;
 
         switch (hash (tokens[0].c_str ())) {
             case hash ("mtllib"):
@@ -28,16 +29,30 @@ std::unique_ptr<Model> ModelImporter::fromObj (std::string const &path) {
                 std::cout << "Is o" << std::endl;
                 break;
             case hash ("v"):
-                std::cout << "Is v" << std::endl;
+                ret_model->unique_vertex_pos.push_back (
+                        std::make_shared<glm::vec3> (
+                            glm::vec3 (std::strtof (tokens[1].c_str (), NULL), 
+                                       std::strtof (tokens[2].c_str (), NULL), 
+                                       std::strtof (tokens[3].c_str (), NULL))));
                 break;
             case hash ("vt"):
-                std::cout << "Is vt" << std::endl;
+                ret_model->unique_vertex_tex.push_back (
+                        std::make_shared<glm::vec2> (
+                            glm::vec2 (std::strtof (tokens[1].c_str (), NULL), 
+                                       std::strtof (tokens[2].c_str (), NULL))));
                 break;
             case hash ("vn"):
-                std::cout << "Is vn" << std::endl;
+                ret_model->unique_vertex_norm.push_back (
+                        std::make_shared<glm::vec3> (
+                            glm::vec3 (std::strtof (tokens[1].c_str (), NULL), 
+                                       std::strtof (tokens[2].c_str (), NULL), 
+                                       std::strtof (tokens[3].c_str (), NULL))));
                 break;
             case hash ("g"):
-                std::cout << "Is g" << std::endl;
+                ret_model->meshes.push_back (Mesh ());
+                ret_model->unique_vertex_pos_offset += (ret_model->unique_vertex_pos.size () - ret_model->unique_vertex_pos_offset);
+                ret_model->unique_vertex_tex_offset += (ret_model->unique_vertex_tex.size () - ret_model->unique_vertex_tex_offset);
+                ret_model->unique_vertex_norm_offset += (ret_model->unique_vertex_norm.size () - ret_model->unique_vertex_norm_offset);
                 break;
             case hash ("usemtl"):
                 std::cout << "Is usemtl" << std::endl;
@@ -46,13 +61,27 @@ std::unique_ptr<Model> ModelImporter::fromObj (std::string const &path) {
                 std::cout << "Is s" << std::endl;
                 break;
             case hash ("f"):
-                std::cout << "Is f" << std::endl;
+                ret_model->meshes.back ().vertices.push_back (Vertex ());
                 break;
             default:
                 std::cout << "Something else" << std::endl;
         }
-
-        // return nullptr;
     }
     return nullptr;
+}
+
+inline std::array<int, 3> ModelImporter::tokenize_face_param (std::string face_param) {
+        std::vector<std::string> tokens;
+        std::array<int, 3> ret;
+
+        std::istringstream iss (face_param);
+        std::copy (std::istream_iterator<std::string>(iss),
+                   std::istream_iterator<std::string>(),
+                   std::back_inserter(tokens));
+
+        for (int i = 0 ; i < 3 ; i++) {
+            ret[i] = std::stoi (tokens[i]);
+        }
+
+        return ret;
 }
