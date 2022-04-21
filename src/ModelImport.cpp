@@ -5,7 +5,7 @@ constexpr unsigned int hash(const char* str, int h = 0) {
     return !str[h] ? 5381 : (hash(str, h+1)*33) ^ str[h];
 }
 
-std::unique_ptr<Model> ModelImporter::Obj::fromObj (std::string const &path) {
+std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
     Model ret_model = Model ();
     bool new_mesh = true;
 
@@ -59,37 +59,31 @@ std::unique_ptr<Model> ModelImporter::Obj::fromObj (std::string const &path) {
                 std::cout << "Is s" << std::endl;
                 break;
             case hash ("f"): // Face
-                ret_model.meshes.back().indices.push_back(ModelImporter::Obj::add_vertex(tokens[1], 
-                                                                                         &ret_model, 
-                                                                                         &temp_vertex_pos, 
-                                                                                         &temp_vertex_norm, 
-                                                                                         &temp_vertex_tex));
-                ret_model.meshes.back().indices.push_back(ModelImporter::Obj::add_vertex(tokens[2], 
-                                                                                         &ret_model, 
-                                                                                         &temp_vertex_pos, 
-                                                                                         &temp_vertex_norm, 
-                                                                                         &temp_vertex_tex));
-                ret_model.meshes.back().indices.push_back(ModelImporter::Obj::add_vertex(tokens[3], 
-                                                                                         &ret_model, 
-                                                                                         &temp_vertex_pos, 
-                                                                                         &temp_vertex_norm, 
-                                                                                         &temp_vertex_tex));
+                ret_model.meshes.back().indices.push_back(ModelImporter::Obj::_add_vertex(tokens[1], 
+                                                                                          &ret_model, 
+                                                                                          &temp_vertex_pos, 
+                                                                                          &temp_vertex_norm, 
+                                                                                          &temp_vertex_tex));
+                ret_model.meshes.back().indices.push_back(ModelImporter::Obj::_add_vertex(tokens[2], 
+                                                                                          &ret_model, 
+                                                                                          &temp_vertex_pos, 
+                                                                                          &temp_vertex_norm, 
+                                                                                          &temp_vertex_tex));
+                ret_model.meshes.back().indices.push_back(ModelImporter::Obj::_add_vertex(tokens[3], 
+                                                                                          &ret_model, 
+                                                                                          &temp_vertex_pos, 
+                                                                                          &temp_vertex_norm, 
+                                                                                          &temp_vertex_tex));
                 break;
             default:
                 std::cout << "Something else" << std::endl;
         }
     }
-    std::cout << "Done" << std::endl;
-
-    for (auto index : ret_model.meshes.back().indices) {
-        std::cout << index << " ";
-    }
-    std::cout << std::endl;
 
     return std::make_unique<Model> (ret_model);
 }
 
-inline std::array<int, 3> ModelImporter::Obj::tokenize_face_param (std::string face_param) {
+inline std::array<int, 3> ModelImporter::Obj::_tokenize_face_param (std::string face_param) {
         std::array<int, 3> ret;
 
         std::string bld;
@@ -106,17 +100,17 @@ inline std::array<int, 3> ModelImporter::Obj::tokenize_face_param (std::string f
         return ret;
 }
 
-inline unsigned int ModelImporter::Obj::add_vertex (std::string vertex_param,
-                                                    Model *ret_model,
-                                                    std::vector<glm::vec3> const *temp_vertex_pos,
-                                                    std::vector<glm::vec3> const *temp_vertex_norm,
-                                                    std::vector<glm::vec2> const *temp_vertex_tex)
+inline unsigned int ModelImporter::Obj::_add_vertex (std::string vertex_param,
+                                                     Model *ret_model,
+                                                     std::vector<glm::vec3> const *temp_vertex_pos,
+                                                     std::vector<glm::vec3> const *temp_vertex_norm,
+                                                     std::vector<glm::vec2> const *temp_vertex_tex)
 {
-    auto tokenized_param = ModelImporter::Obj::tokenize_face_param(vertex_param);
+    auto tokenized_param = ModelImporter::Obj::_tokenize_face_param(vertex_param);
     Vertex constructed = {
         temp_vertex_pos->at (tokenized_param[0] - 1),
         temp_vertex_norm->at (tokenized_param[2] - 1),
-        temp_vertex_tex->at (tokenized_param[1] - 1)
+        tokenized_param[1] ? temp_vertex_tex->at (tokenized_param[1] - 1) : glm::vec2()
     };
 
     auto result = std::find (ret_model->meshes.back().vertices.begin (),

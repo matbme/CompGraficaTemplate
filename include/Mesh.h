@@ -48,8 +48,14 @@ public:
     std::vector<Texture> textures;
 
     void setup ();
-    void draw (/* Shader &shader */);
+    void draw ();
+
+    void setShader (Shader *shader) {
+        this->shader = shader;
+        shader->Use ();
+    }
 private:
+    Shader *shader;
     unsigned int VAO, VBO, EBO;
 };
 

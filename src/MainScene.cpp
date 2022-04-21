@@ -72,8 +72,8 @@ void MainScene::update () {
 }
 
 void MainScene::setupScene () {
-    std::string path ("/home/matbme/Downloads/3D_Models/Cube/cube.obj");
-    auto model = ModelImporter::Obj::fromObj (path);
+    std::string path ("/home/matbme/Downloads/3D_Models/Classic-NoTexture/apple.obj");
+    auto model = ModelImporter::Obj::import (path);
     // Object<BasicShapes::Cube>* cube = new Object<BasicShapes::Cube> ();
     // cube->setShader(shader);
     // cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
@@ -87,5 +87,6 @@ void MainScene::setupScene () {
     // push_object (cube);
     // push_object (floor);
     objects.push_back(std::move (model));
+    objects[0]->meshes.back().setShader(shader);
     objects[0]->meshes.back().setup();
 }

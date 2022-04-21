@@ -44,7 +44,7 @@ void Mesh::setup () {
     glBindVertexArray (0);
 }
 
-void Mesh::draw (/* Shader &shader */) {
+void Mesh::draw () {
     std::array<int, TextureTypeNum> textureType_number = { 0 };
     int texture_number = GL_TEXTURE0;
 
