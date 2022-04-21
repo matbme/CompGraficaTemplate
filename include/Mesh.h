@@ -13,6 +13,11 @@ struct Vertex {
     glm::vec3 Normal;
     glm::vec2 TexCoords;
 };
+constexpr bool operator==(const Vertex& lhs, const Vertex& rhs) {
+    return lhs.Position  == rhs.Position   &&
+           lhs.Normal    == rhs.Normal     &&
+           lhs.TexCoords == rhs.TexCoords;
+}
 
 enum TextureType { DIFFUSE, SPECULAR };
 // NOTE: Must match the number of elements in the above struct
@@ -33,16 +38,17 @@ struct Texture {
 
 class Mesh {
 public:
-    Mesh (std::vector<Vertex> vertices,
-          std::vector<unsigned int> indices,
-          std::vector<Texture> textures);
+    // Mesh (std::vector<Vertex> vertices,
+    //       std::vector<unsigned int> indices,
+    //       std::vector<Texture> textures);
     Mesh () {}
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
 
-    void draw (Shader &shader);
+    void setup ();
+    void draw (/* Shader &shader */);
 private:
     unsigned int VAO, VBO, EBO;
 };

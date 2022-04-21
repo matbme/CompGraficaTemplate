@@ -13,6 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // Local
+#include "Model.h"
 #include "Shader.h"
 #include "Object.h"
 #include "KeyEvent.h"
@@ -72,16 +73,16 @@ protected:
     std::shared_ptr<Camera> cam;
 
     // Objetos na cena
-    std::vector<Object<Shape>*> objects;
+    std::vector<std::unique_ptr<Model>> objects;
 
     static inline const bool key_is_pressed (int key) {
         return KeyEvent::keys[key] == KeyEvent::PRESSED;
     }
     
-    template <class T>
-    void push_object (Object<T> *obj) {
-        objects.push_back ((Object<Shape> *) obj);
-    }
+    // template <class T>
+    // void push_object (Object<T> *obj) {
+    //     objects.push_back ((Object<Shape> *) obj);
+    // }
 };
 
 #endif

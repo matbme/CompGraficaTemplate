@@ -1,4 +1,5 @@
 #include "Scenes/MainScene.h"
+#include "ModelImport.h"
 
 void MainScene::update () {
 	if (key_is_pressed (GLFW_KEY_ESCAPE))
@@ -24,32 +25,32 @@ void MainScene::update () {
         cam->cameraUpdated = true;
     }
 
-    if (key_is_pressed (GLFW_KEY_X)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
-    }
-
-    if (key_is_pressed (GLFW_KEY_Y)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
-    }
-
-    if (key_is_pressed (GLFW_KEY_Z)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
-    }
-
-    if (key_is_pressed (GLFW_KEY_MINUS)) {
-        for (auto obj : objects)
-            obj->setScale (glm::vec3 (0.9f, 0.9f, 0.9f));
-        KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
-    }
-
-    if (key_is_pressed (GLFW_KEY_RIGHT_SHIFT) && key_is_pressed (GLFW_KEY_EQUAL)) {
-        for (auto obj : objects)
-            obj->setScale (glm::vec3 (1.1f, 1.1f, 1.1f));
-        KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
-    }
+    // if (key_is_pressed (GLFW_KEY_X)) {
+    //     for (auto obj : objects)
+    //         obj->setRotation(glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
+    // }
+    //
+    // if (key_is_pressed (GLFW_KEY_Y)) {
+    //     for (auto obj : objects)
+    //         obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
+    // }
+    //
+    // if (key_is_pressed (GLFW_KEY_Z)) {
+    //     for (auto obj : objects)
+    //         obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
+    // }
+    //
+    // if (key_is_pressed (GLFW_KEY_MINUS)) {
+    //     for (auto obj : objects)
+    //         obj->setScale (glm::vec3 (0.9f, 0.9f, 0.9f));
+    //     KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
+    // }
+    //
+    // if (key_is_pressed (GLFW_KEY_RIGHT_SHIFT) && key_is_pressed (GLFW_KEY_EQUAL)) {
+    //     for (auto obj : objects)
+    //         obj->setScale (glm::vec3 (1.1f, 1.1f, 1.1f));
+    //     KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
+    // }
 
     if (key_is_pressed (GLFW_KEY_LEFT_SHIFT)) {
         cam->cameraPos += cam->cameraSpeed * cam->cameraUp;
@@ -71,16 +72,20 @@ void MainScene::update () {
 }
 
 void MainScene::setupScene () {
-    Object<BasicShapes::Cube>* cube = new Object<BasicShapes::Cube> ();
-    cube->setShader(shader);
-    cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
-
-    Object<BasicShapes::Floor>* floor = new Object<BasicShapes::Floor> ();
-    floor->setShader(shader);
-    floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
+    std::string path ("/home/matbme/Downloads/3D_Models/Cube/cube.obj");
+    auto model = ModelImporter::Obj::fromObj (path);
+    // Object<BasicShapes::Cube>* cube = new Object<BasicShapes::Cube> ();
+    // cube->setShader(shader);
+    // cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
+    //
+    // Object<BasicShapes::Floor>* floor = new Object<BasicShapes::Floor> ();
+    // floor->setShader(shader);
+    // floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
 
     view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
 
-    push_object (cube);
-    push_object (floor);
+    // push_object (cube);
+    // push_object (floor);
+    objects.push_back(std::move (model));
+    objects[0]->meshes.back().setup();
 }

@@ -82,9 +82,10 @@ void Scene::render () {
         Scene::window_resized = false;
     }
 
-    for (auto obj : objects) {
-        obj->update ();
-        obj->draw ();
+    for (auto&& obj : objects) {
+        // obj->update ();
+        // obj->draw ();
+        obj->meshes.back().draw();
     }
 }
 
