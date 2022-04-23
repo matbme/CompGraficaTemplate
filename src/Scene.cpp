@@ -83,7 +83,7 @@ void Scene::render () {
     }
 
     for (auto&& obj : objects) {
-        // obj->update ();
+        obj->update ();
         obj->draw();
     }
 }

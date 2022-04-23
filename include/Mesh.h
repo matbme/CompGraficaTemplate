@@ -1,12 +1,15 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "Shader.h"
-
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <array>
 #include <memory>
 #include <vector>
+
+#include "Shader.h"
 
 struct Vertex {
     glm::vec3 Position;
@@ -38,7 +41,7 @@ struct Texture {
 
 class Mesh {
 public:
-    Mesh () {}
+    Mesh ();
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -47,9 +50,20 @@ public:
     void setup ();
     void draw ();
 
+    void rotate (float angle, glm::vec3 axis, bool reset = false);
+    void translate (glm::vec3 displacements, bool reset = false);
+    void rescale (glm::vec3 scaleFactors, bool reset = false);
+
+    void update ();
+
     void setShader (Shader *shader);
 private:
+    glm::mat4 model;
+    glm::vec3 pos, scale;
+    float angle;
+
     Shader *shader;
+
     unsigned int VAO, VBO, EBO;
 };
 

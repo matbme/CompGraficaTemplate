@@ -25,32 +25,32 @@ void MainScene::update () {
         cam->cameraUpdated = true;
     }
 
-    // if (key_is_pressed (GLFW_KEY_X)) {
-    //     for (auto obj : objects)
-    //         obj->setRotation(glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
-    // }
-    //
-    // if (key_is_pressed (GLFW_KEY_Y)) {
-    //     for (auto obj : objects)
-    //         obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
-    // }
-    //
-    // if (key_is_pressed (GLFW_KEY_Z)) {
-    //     for (auto obj : objects)
-    //         obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
-    // }
-    //
-    // if (key_is_pressed (GLFW_KEY_MINUS)) {
-    //     for (auto obj : objects)
-    //         obj->setScale (glm::vec3 (0.9f, 0.9f, 0.9f));
-    //     KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
-    // }
-    //
-    // if (key_is_pressed (GLFW_KEY_RIGHT_SHIFT) && key_is_pressed (GLFW_KEY_EQUAL)) {
-    //     for (auto obj : objects)
-    //         obj->setScale (glm::vec3 (1.1f, 1.1f, 1.1f));
-    //     KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
-    // }
+    if (key_is_pressed (GLFW_KEY_X)) {
+        for (auto&& obj : objects)
+            obj->rotate (glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
+    }
+
+    if (key_is_pressed (GLFW_KEY_Y)) {
+        for (auto&& obj : objects)
+            obj->rotate (glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
+    }
+
+    if (key_is_pressed (GLFW_KEY_Z)) {
+        for (auto&& obj : objects)
+            obj->rotate (glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
+    }
+
+    if (key_is_pressed (GLFW_KEY_MINUS)) {
+        for (auto&& obj : objects)
+            obj->rescale (glm::vec3 (0.9f, 0.9f, 0.9f));
+        KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
+    }
+
+    if (key_is_pressed (GLFW_KEY_RIGHT_SHIFT) && key_is_pressed (GLFW_KEY_EQUAL)) {
+        for (auto&& obj : objects)
+            obj->rescale (glm::vec3 (1.1f, 1.1f, 1.1f));
+        KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
+    }
 
     if (key_is_pressed (GLFW_KEY_LEFT_SHIFT)) {
         cam->cameraPos += cam->cameraSpeed * cam->cameraUp;

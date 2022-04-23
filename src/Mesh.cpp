@@ -1,5 +1,12 @@
 #include "Mesh.h"
 
+Mesh::Mesh () {
+    model = glm::mat4 (1);
+    pos = glm::vec3 (0.0f, 0.0f, 0.0f);
+    scale = glm::vec3 (1.0f, 1.0f, 1.0f);
+    angle = 0.0f;
+}
+
 void Mesh::setup () {
     // Setup mesh
     glGenVertexArrays (1, &VAO);
@@ -66,4 +73,26 @@ void Mesh::draw () {
 void Mesh::setShader (Shader *shader) {
     this->shader = shader;
     shader->Use ();
+}
+
+void Mesh::rotate (float angle, glm::vec3 axis, bool reset) {
+    if (reset) model = glm::mat4 (1);
+    model = glm::rotate (model, angle, axis);
+    this->angle += angle;
+}
+
+void Mesh::translate (glm::vec3 displacements, bool reset) {
+    if (reset) model = glm::mat4 (1);
+    model = glm::translate (model, displacements);
+}
+
+void Mesh::rescale (glm::vec3 scaleFactors, bool reset) {
+    if (reset) model = glm::mat4 (1);
+    model = glm::scale (model, scaleFactors);
+    scale = scaleFactors;
+}
+
+void Mesh::update () {
+    GLint modelLoc = glGetUniformLocation (shader->ID, "model");
+    glUniformMatrix4fv (modelLoc, 1, GL_FALSE, glm::value_ptr (model));
 }
