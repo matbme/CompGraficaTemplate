@@ -1,12 +1,5 @@
 #include "Mesh.h"
 
-// Mesh::Mesh (std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
-//     this->vertices = vertices;
-//     this->indices = indices;
-//     this->textures = textures;
-//
-// }
-
 void Mesh::setup () {
     // Setup mesh
     glGenVertexArrays (1, &VAO);
@@ -68,4 +61,9 @@ void Mesh::draw () {
     glBindVertexArray (VAO);
     glDrawElements (GL_TRIANGLES, indices.size (), GL_UNSIGNED_INT, 0);
     glBindVertexArray (0);
+}
+
+void Mesh::setShader (Shader *shader) {
+    this->shader = shader;
+    shader->Use ();
 }

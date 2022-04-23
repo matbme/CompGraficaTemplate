@@ -73,20 +73,10 @@ void MainScene::update () {
 
 void MainScene::setupScene () {
     std::string path ("/home/matbme/Downloads/3D_Models/Classic-NoTexture/apple.obj");
-    auto model = ModelImporter::Obj::import (path);
-    // Object<BasicShapes::Cube>* cube = new Object<BasicShapes::Cube> ();
-    // cube->setShader(shader);
-    // cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
-    //
-    // Object<BasicShapes::Floor>* floor = new Object<BasicShapes::Floor> ();
-    // floor->setShader(shader);
-    // floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
+    auto apple = ModelImporter::Obj::import (path);
+    apple->set_shader (shader);
+
+    add_object (&apple);
 
     view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
-
-    // push_object (cube);
-    // push_object (floor);
-    objects.push_back(std::move (model));
-    objects[0]->meshes.back().setShader(shader);
-    objects[0]->meshes.back().setup();
 }

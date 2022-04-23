@@ -9,7 +9,10 @@
 class Model {
 public:
     Model ();
-    void draw (Shader &shader);
+    void draw ();
+    void setup_meshes ();
+    void set_shader (Shader *shader);
+
     std::vector<Mesh> meshes;
 };
 

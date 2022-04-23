@@ -84,8 +84,7 @@ void Scene::render () {
 
     for (auto&& obj : objects) {
         // obj->update ();
-        // obj->draw ();
-        obj->meshes.back().draw();
+        obj->draw();
     }
 }
 
@@ -125,4 +124,9 @@ void Scene::setupCamera () {
     glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
 
 	glEnable (GL_DEPTH_TEST);
+}
+
+unsigned int Scene::add_object (std::unique_ptr<Model> *object) {
+    this->objects.push_back (std::move (*object));
+    return this->objects.size ();
 }

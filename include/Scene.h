@@ -15,13 +15,8 @@
 // Local
 #include "Model.h"
 #include "Shader.h"
-#include "Object.h"
 #include "KeyEvent.h"
 #include "Camera.h"
-
-#include "Shape.h"
-#include "BasicShapes/Cube.h"
-#include "BasicShapes/Floor.h"
 
 class Scene {
 public:
@@ -44,6 +39,7 @@ public:
 	virtual void setupScene () {}
 	void setupCamera ();
 	unsigned int loadTexture (std::string filename); 
+    unsigned int add_object (std::unique_ptr<Model> *object);
 
     // Callbacks de input
 	static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -75,14 +71,10 @@ protected:
     // Objetos na cena
     std::vector<std::unique_ptr<Model>> objects;
 
+    // Tecla
     static inline const bool key_is_pressed (int key) {
         return KeyEvent::keys[key] == KeyEvent::PRESSED;
     }
-    
-    // template <class T>
-    // void push_object (Object<T> *obj) {
-    //     objects.push_back ((Object<Shape> *) obj);
-    // }
 };
 
 #endif
