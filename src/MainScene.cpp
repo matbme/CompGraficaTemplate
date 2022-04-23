@@ -72,11 +72,11 @@ void MainScene::update () {
 }
 
 void MainScene::setupScene () {
-    std::string path ("/home/matbme/Downloads/3D_Models/Classic-NoTexture/apple.obj");
-    auto apple = ModelImporter::Obj::import (path);
-    apple->set_shader (shader);
+    std::string path ("/home/matbme/Downloads/3D_Models/Pokemon/Pikachu.obj");
+    auto pikachu = ModelImporter::Obj::import (path);
+    pikachu->set_shader (shader);
 
-    add_object (&apple);
+    add_object (&pikachu);
 
     view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
 }

@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "Material.h"
 #include "Shader.h"
 
 struct Vertex {
@@ -46,6 +47,7 @@ public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
+    Material *material;
 
     void setup ();
     void draw ();

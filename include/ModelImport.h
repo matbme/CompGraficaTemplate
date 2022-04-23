@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -11,8 +12,10 @@
 #include <array>
 
 #include "Model.h"
+#include "Material.h"
 
 namespace ModelImporter {
+
 namespace Obj {
 std::unique_ptr<Model> import (std::string const &path);
 inline std::array<int, 3> _tokenize_face_param (std::string face_param);
@@ -25,6 +28,11 @@ inline std::pair<std::unique_ptr<Model> ,unsigned int> _add_vertex (
     std::vector<glm::vec2> const *temp_vertex_tex);
 }
 
+namespace Mtl {
+std::map<std::string, Material> import (std::string const &path);
+}
+
+std::string extract_path (std::string const &path);
 inline std::vector<std::string> tokenize_line (std::string line);
 }
 

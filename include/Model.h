@@ -1,10 +1,12 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <map>
 #include <string>
 #include <vector>
 
 #include "Mesh.h"
+#include "Material.h"
 
 class Model {
 public:
@@ -20,6 +22,7 @@ public:
     void update ();
 
     std::vector<Mesh> meshes;
+    std::map<std::string, Material> materials;
 };
 
 #endif
