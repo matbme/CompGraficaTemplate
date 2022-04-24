@@ -76,7 +76,15 @@ void MainScene::setupScene () {
     auto pikachu = ModelImporter::Obj::import (path);
     pikachu->set_shader (shader);
 
+    path = "/home/matbme/Downloads/3D_Models/Pokemon/PikachuF.obj";
+    auto pikachuF = ModelImporter::Obj::import (path);
+    pikachuF->set_shader (shader);
+
+    pikachuF->translate (glm::vec3 (8.0f, 0.0f, 0.0f));
+    pikachuF->rescale (glm::vec3 (0.1f, 0.1f, 0.1f));
+
     add_object (&pikachu);
+    add_object (&pikachuF);
 
     view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
 }

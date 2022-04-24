@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 #include <array>
+#include <limits>
 
 #include "Model.h"
 #include "Material.h"

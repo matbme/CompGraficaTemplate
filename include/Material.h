@@ -6,6 +6,11 @@
 
 class Material {
 public:
+    Material () {
+        ka_tex_id = -1;
+        kd_tex_id = -1;
+    }
+
     std::string get_name () { return this->name; }
     float get_specular_exp () { return this->ns; }
     float get_optical_density () { return this->ni; }
@@ -29,6 +34,9 @@ public:
     void set_specular_refl (glm::vec3 ks) { this->ks = ks; }
     void set_ka_tex_map (std::string map_ka) { this->map_ka = map_ka; }
     void set_kd_tex_map (std::string map_kd) { this->map_kd = map_kd; }
+
+    int ka_tex_id, kd_tex_id;
+    friend std::pair<unsigned int, unsigned int> loadTextures (Material mat, std::string path);
 private:
     std::string name;
 

@@ -17,6 +17,9 @@ Scene::Scene (GLuint width, GLuint height, std::string window_name) {
 	glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+    stbi_set_flip_vertically_on_load (true);
+
     Scene::window_width = width;
     Scene::window_height = height;
 

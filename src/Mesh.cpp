@@ -7,6 +7,9 @@ Mesh::Mesh () {
     angle = 0.0f;
 }
 
+
+std::map<std::string, unsigned int> Mesh::loaded_tex_rel_path;
+
 void Mesh::setup () {
     // Setup mesh
     glGenVertexArrays (1, &VAO);
@@ -37,9 +40,9 @@ void Mesh::setup () {
                            sizeof (Vertex), (void *) offsetof (Vertex, Normal));
 
     // Vertex texture coords
-    // glEnableVertexAttribArray (2);
-    // glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE,
-    //                        sizeof (Vertex), (void *) offsetof (Vertex, TexCoords));
+    glEnableVertexAttribArray (2);
+    glVertexAttribPointer (2, 2, GL_FLOAT, GL_FALSE,
+                           sizeof (Vertex), (void *) offsetof (Vertex, TexCoords));
 
     glBindVertexArray (0);
 }
@@ -48,22 +51,22 @@ void Mesh::draw () {
     std::array<int, TextureTypeNum> textureType_number = { 0 };
     int texture_number = GL_TEXTURE0;
 
-    // for (auto texture : textures) {
-    //     glActiveTexture (texture_number++);
-    //
-    //     textureType_number[texture.type]++;
-    //
-    //     shader.setFloat(
-    //         ("material." +
-    //         TextureType_toString (texture.type) +
-    //         std::to_string (textureType_number[texture.type])
-    //         ).c_str (),
-    //         texture_number - GL_TEXTURE0
-    //     );
-    //
-    //     glBindTexture (GL_TEXTURE_2D, texture.id);
-    // }
-    // glActiveTexture (GL_TEXTURE0);
+    for (auto texture : textures) {
+        glActiveTexture (texture_number++);
+
+        textureType_number[texture.type]++;
+
+        shader->setFloat(
+            ("material." +
+            TextureType_toString (texture.type) +
+            std::to_string (textureType_number[texture.type])
+            ).c_str (),
+            texture_number - GL_TEXTURE0
+        );
+
+        glBindTexture (GL_TEXTURE_2D, texture.id);
+    }
+    glActiveTexture (GL_TEXTURE0);
 
     glBindVertexArray (VAO);
     glDrawElements (GL_TRIANGLES, indices.size (), GL_UNSIGNED_INT, 0);

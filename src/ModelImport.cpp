@@ -1,5 +1,8 @@
 #include "ModelImport.h"
 
+// Makes getting current mesh less spaghettity 
+#define CURRENT_MESH ret_model->meshes.back()
+
 // Simple hashing function to compare instructions at O(n)
 constexpr unsigned int hash(const char* str, int h = 0) {
     return !str[h] ? 5381 : (hash(str, h+1)*33) ^ str[h];
@@ -27,39 +30,57 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
 
         auto tokens = ModelImporter::tokenize_line (line);
         switch (hash (tokens[0].c_str ())) {
-            case hash ("mtllib"): // Import materials from
+            case hash ("mtllib"): { // Import materials from
                 ret_model->materials = ModelImporter::Mtl::import ({ModelImporter::extract_path (path) + tokens[1]});
                 break;
-            case hash ("o"):
+            }
+            case hash ("o"): {
                 std::cout << "Is o" << std::endl;
                 break;
-            case hash ("v"): // Vertex position
+            }
+            case hash ("v"): { // Vertex position
                 temp_vertex_pos.push_back (
                         glm::vec3 (std::strtof (tokens[1].c_str (), NULL), 
                                    std::strtof (tokens[2].c_str (), NULL), 
                                    std::strtof (tokens[3].c_str (), NULL)));
                 break;
-            case hash ("vt"): // Vertex texture coords
+            }
+            case hash ("vt"): { // Vertex texture coords
                 temp_vertex_tex.push_back (
                         glm::vec2 (std::strtof (tokens[1].c_str (), NULL), 
                                    std::strtof (tokens[2].c_str (), NULL)));
                 break;
-            case hash ("vn"): // Vertex normals
+            }
+            case hash ("vn"): { // Vertex normals
                 temp_vertex_norm.push_back (
                         glm::vec3 (std::strtof (tokens[1].c_str (), NULL), 
                                    std::strtof (tokens[2].c_str (), NULL), 
                                    std::strtof (tokens[3].c_str (), NULL)));
                 break;
-            case hash ("g"): // New group
+            }
+            case hash ("g"): { // New group
                 new_mesh = true;
                 break;
-            case hash ("usemtl"): // Use material for mesh
-                ret_model->meshes.back().material = &ret_model->materials[tokens[1]];
+            }
+            case hash ("usemtl"): { // Use material for mesh
+                CURRENT_MESH.material = &ret_model->materials[tokens[1]];
+                auto [ka_tex_id, kd_tex_id] = loadTextures (*CURRENT_MESH.material, 
+                                                            ModelImporter::extract_path (path));
+                if (ka_tex_id != std::numeric_limits<unsigned int>::max()) {
+                    Texture tex = { ka_tex_id, SPECULAR };
+                    CURRENT_MESH.textures.push_back(tex);
+                }
+                if (kd_tex_id != std::numeric_limits<unsigned int>::max()) {
+                    Texture tex = { kd_tex_id, DIFFUSE };
+                    CURRENT_MESH.textures.push_back(tex);
+                }
                 break;
-            case hash ("s"):
+            }
+            case hash ("s"): {
                 std::cout << "Is s" << std::endl;
                 break;
-            case hash ("f"): // Face
+            }
+            case hash ("f"): { // Face
                 for (int i = 1 ; i <= 3 ; i++) {
                     auto [model_ptr, pos] = ModelImporter::Obj::_add_vertex (
                             tokens[i], 
@@ -68,11 +89,13 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
                             &temp_vertex_norm, 
                             &temp_vertex_tex);
                     ret_model.swap (model_ptr);
-                    ret_model->meshes.back().indices.push_back (pos);
+                    CURRENT_MESH.indices.push_back (pos);
                 }
                 break;
-            default:
+            }
+            default: {
                 std::cout << "Something else" << std::endl;
+            }
         }
     }
 
@@ -113,17 +136,17 @@ inline std::pair<std::unique_ptr<Model> ,unsigned int> ModelImporter::Obj::_add_
     };
 
     // Checks whether constructed vertex already exists
-    auto result = std::find (ret_model->meshes.back().vertices.begin (),
-                             ret_model->meshes.back().vertices.end (),
+    auto result = std::find (CURRENT_MESH.vertices.begin (),
+                             CURRENT_MESH.vertices.end (),
                              constructed);
 
     // Append to vertex vector if it doesn't exist, otherwire returns its position
     int pos = -1;
-    if (result == ret_model->meshes.back().vertices.end ()) {
-        ret_model->meshes.back().vertices.push_back (constructed);
-        pos = ret_model->meshes.back().vertices.size() - 1;
+    if (result == CURRENT_MESH.vertices.end ()) {
+        CURRENT_MESH.vertices.push_back (constructed);
+        pos = CURRENT_MESH.vertices.size() - 1;
     } else {
-        pos = std::distance(ret_model->meshes.back().vertices.begin (), result);
+        pos = std::distance(CURRENT_MESH.vertices.begin (), result);
     }
 
     assert (pos != -1);
@@ -231,4 +254,68 @@ inline std::vector<std::string> ModelImporter::tokenize_line(std::string line) {
                std::back_inserter(tokens));
 
     return tokens;
+}
+
+// Friend of Material
+std::pair<unsigned int, unsigned int> loadTextures (Material mat, std::string path) {
+    std::pair<unsigned int, unsigned int> ret {
+        std::numeric_limits<unsigned int>::max (), 
+        std::numeric_limits<unsigned int>::max ()
+    };
+    int it = 0;
+
+    for (auto map : {mat.map_ka, mat.map_kd}) {
+        if (map.empty()) continue;
+
+        // Check if texture was already loaded
+        auto result = Mesh::loaded_tex_rel_path.find (map);
+        if (result != Mesh::loaded_tex_rel_path.end ()) {
+            (it ? ret.first : ret.second) = Mesh::loaded_tex_rel_path[map];
+            continue;
+        }
+
+        std::string filename = path + map;
+
+#ifdef _WIN32
+        int pos = 0;
+        while (pos != string::npos) {
+            pos = filename.find ("/");
+            filename.replace (pos, 1, "\\");
+        }
+#endif
+
+        unsigned int textureID;
+        glGenTextures(1, &textureID);
+
+        int width, height, nrComponents;
+        unsigned char *data = stbi_load (filename.c_str(), &width, &height, &nrComponents, 0);
+        if (data) {
+            GLenum format;
+            if (nrComponents == 1) format = GL_RED;
+            else if (nrComponents == 3) format = GL_RGB;
+            else if (nrComponents == 4) format = GL_RGBA;
+
+            glBindTexture (GL_TEXTURE_2D, textureID);
+            glTexImage2D (GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap (GL_TEXTURE_2D);
+
+            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            stbi_image_free (data);
+        }
+        else
+        {
+            std::cout << "Texture failed to load at path: " << path << std::endl;
+            stbi_image_free (data);
+        }
+
+        Mesh::loaded_tex_rel_path[map] = textureID;
+
+        (it ? ret.first : ret.second) = textureID;
+    }
+
+    return ret;
 }

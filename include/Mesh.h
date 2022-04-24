@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <array>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -43,6 +44,8 @@ struct Texture {
 class Mesh {
 public:
     Mesh ();
+
+    static std::map<std::string, unsigned int> loaded_tex_rel_path;
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
