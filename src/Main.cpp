@@ -7,6 +7,8 @@
 #include "KeyEvent.h"
 #include "Scenes/MainScene.h"
 
+#include "ModelImport.h"
+
 int main () {
     MainScene *main_scene = new MainScene (1920, 1080, "template");
 

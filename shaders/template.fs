@@ -1,9 +1,11 @@
 #version 450 core
-in vec4 finalColor;
-
 out vec4 color;
+
+in vec2 TexCoord;
+
+uniform sampler2D boundTexture;
 
 void main()
 {
-    color = finalColor;
+    color = texture(boundTexture, TexCoord);
 }

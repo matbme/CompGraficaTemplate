@@ -17,6 +17,9 @@ Scene::Scene (GLuint width, GLuint height, std::string window_name) {
 	glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+    stbi_set_flip_vertically_on_load (true);
+
     Scene::window_width = width;
     Scene::window_height = height;
 
@@ -82,9 +85,9 @@ void Scene::render () {
         Scene::window_resized = false;
     }
 
-    for (auto obj : objects) {
+    for (auto&& obj : objects) {
         obj->update ();
-        obj->draw ();
+        obj->draw();
     }
 }
 
@@ -124,4 +127,9 @@ void Scene::setupCamera () {
     glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
 
 	glEnable (GL_DEPTH_TEST);
+}
+
+unsigned int Scene::add_object (std::unique_ptr<Model> *object) {
+    this->objects.push_back (std::move (*object));
+    return this->objects.size ();
 }

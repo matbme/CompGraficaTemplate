@@ -1,4 +1,5 @@
 #include "Scenes/MainScene.h"
+#include "ModelImport.h"
 
 void MainScene::update () {
 	if (key_is_pressed (GLFW_KEY_ESCAPE))
@@ -25,29 +26,29 @@ void MainScene::update () {
     }
 
     if (key_is_pressed (GLFW_KEY_X)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
+        for (auto&& obj : objects)
+            obj->rotate (glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
     }
 
     if (key_is_pressed (GLFW_KEY_Y)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
+        for (auto&& obj : objects)
+            obj->rotate (glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
     }
 
     if (key_is_pressed (GLFW_KEY_Z)) {
-        for (auto obj : objects)
-            obj->setRotation(glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
+        for (auto&& obj : objects)
+            obj->rotate (glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
     }
 
     if (key_is_pressed (GLFW_KEY_MINUS)) {
-        for (auto obj : objects)
-            obj->setScale (glm::vec3 (0.9f, 0.9f, 0.9f));
+        for (auto&& obj : objects)
+            obj->rescale (glm::vec3 (0.9f, 0.9f, 0.9f));
         KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
     }
 
     if (key_is_pressed (GLFW_KEY_RIGHT_SHIFT) && key_is_pressed (GLFW_KEY_EQUAL)) {
-        for (auto obj : objects)
-            obj->setScale (glm::vec3 (1.1f, 1.1f, 1.1f));
+        for (auto&& obj : objects)
+            obj->rescale (glm::vec3 (1.1f, 1.1f, 1.1f));
         KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
     }
 
@@ -71,16 +72,19 @@ void MainScene::update () {
 }
 
 void MainScene::setupScene () {
-    Object<BasicShapes::Cube>* cube = new Object<BasicShapes::Cube> ();
-    cube->setShader(shader);
-    cube->setTranslation(glm::vec3(1.0f, 0.0f, -0.3f));
+    std::string path ("/home/matbme/Downloads/3D_Models/Pokemon/Pikachu.obj");
+    auto pikachu = ModelImporter::Obj::import (path);
+    pikachu->set_shader (shader);
 
-    Object<BasicShapes::Floor>* floor = new Object<BasicShapes::Floor> ();
-    floor->setShader(shader);
-    floor->setTranslation(glm::vec3(-1.0f, 0.0f, 0.9f));
+    path = "/home/matbme/Downloads/3D_Models/Pokemon/PikachuF.obj";
+    auto pikachuF = ModelImporter::Obj::import (path);
+    pikachuF->set_shader (shader);
+
+    pikachuF->translate (glm::vec3 (8.0f, 0.0f, 0.0f));
+    pikachuF->rescale (glm::vec3 (0.1f, 0.1f, 0.1f));
+
+    add_object (&pikachu);
+    add_object (&pikachuF);
 
     view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
-
-    push_object (cube);
-    push_object (floor);
 }
