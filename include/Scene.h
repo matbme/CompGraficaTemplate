@@ -38,8 +38,8 @@ public:
 	void addShaders (std::string vertex_path, std::string frag_path);
 	virtual void setupScene () {}
 	void setupCamera ();
-	unsigned int loadTexture (std::string filename); 
-    unsigned int add_object (std::unique_ptr<Model> *object);
+	unsigned int loadTexture (std::string filename);
+    unsigned int add_object (std::unique_ptr<Model>& object);
 
     // Callbacks de input
 	static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -54,7 +54,7 @@ protected:
     static GLuint window_height;
 
     // Programa de shader, presumindo um unico par de shaders
-    Shader *shader;
+    std::shared_ptr<Shader> shader;
 
     // Parameteros do shader
     glm::mat4 model;

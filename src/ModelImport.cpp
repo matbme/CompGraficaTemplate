@@ -1,6 +1,6 @@
 #include "ModelImport.h"
 
-// Makes getting current mesh less spaghettity 
+// Makes getting current mesh less spaghettity
 #define CURRENT_MESH ret_model->meshes.back()
 
 // Simple hashing function to compare instructions at O(n)
@@ -21,6 +21,7 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
     std::string line;
     while (std::getline (file, line)) {
         if (line == "\r") continue; // Ignore carriage returns
+        if (line == "") continue; // Ignore empty lines
         if (line[0] == '#') continue; // Ignore comments
 
         if (new_mesh) {
@@ -40,21 +41,21 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
             }
             case hash ("v"): { // Vertex position
                 temp_vertex_pos.push_back (
-                        glm::vec3 (std::strtof (tokens[1].c_str (), NULL), 
-                                   std::strtof (tokens[2].c_str (), NULL), 
+                        glm::vec3 (std::strtof (tokens[1].c_str (), NULL),
+                                   std::strtof (tokens[2].c_str (), NULL),
                                    std::strtof (tokens[3].c_str (), NULL)));
                 break;
             }
             case hash ("vt"): { // Vertex texture coords
                 temp_vertex_tex.push_back (
-                        glm::vec2 (std::strtof (tokens[1].c_str (), NULL), 
+                        glm::vec2 (std::strtof (tokens[1].c_str (), NULL),
                                    std::strtof (tokens[2].c_str (), NULL)));
                 break;
             }
             case hash ("vn"): { // Vertex normals
                 temp_vertex_norm.push_back (
-                        glm::vec3 (std::strtof (tokens[1].c_str (), NULL), 
-                                   std::strtof (tokens[2].c_str (), NULL), 
+                        glm::vec3 (std::strtof (tokens[1].c_str (), NULL),
+                                   std::strtof (tokens[2].c_str (), NULL),
                                    std::strtof (tokens[3].c_str (), NULL)));
                 break;
             }
@@ -64,7 +65,7 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
             }
             case hash ("usemtl"): { // Use material for mesh
                 CURRENT_MESH.material = &ret_model->materials[tokens[1]];
-                auto [ka_tex_id, kd_tex_id] = loadTextures (*CURRENT_MESH.material, 
+                auto [ka_tex_id, kd_tex_id] = loadTextures (*CURRENT_MESH.material,
                                                             ModelImporter::extract_path (path));
                 if (ka_tex_id != std::numeric_limits<unsigned int>::max()) {
                     Texture tex = { ka_tex_id, SPECULAR };
@@ -83,10 +84,10 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
             case hash ("f"): { // Face
                 for (int i = 1 ; i <= 3 ; i++) {
                     auto [model_ptr, pos] = ModelImporter::Obj::_add_vertex (
-                            tokens[i], 
-                            std::move (ret_model), 
-                            &temp_vertex_pos, 
-                            &temp_vertex_norm, 
+                            tokens[i],
+                            std::move (ret_model),
+                            &temp_vertex_pos,
+                            &temp_vertex_norm,
                             &temp_vertex_tex);
                     ret_model.swap (model_ptr);
                     CURRENT_MESH.indices.push_back (pos);
@@ -162,6 +163,8 @@ std::map<std::string, Material> ModelImporter::Mtl::import (std::string const &p
     std::string line;
     while (std::getline (file, line)) {
         if (line == "\r") continue; // Ignore carriage returns
+        if (line == "") continue; // Ignore empty lines
+        if (line[0] == '#') continue; // Ignore comments
 
         auto tokens = ModelImporter::tokenize_line (line);
         switch (hash (tokens[0].c_str ())) {
@@ -259,7 +262,7 @@ inline std::vector<std::string> ModelImporter::tokenize_line(std::string line) {
 // Friend of Material
 std::pair<unsigned int, unsigned int> loadTextures (Material mat, std::string path) {
     std::pair<unsigned int, unsigned int> ret {
-        std::numeric_limits<unsigned int>::max (), 
+        std::numeric_limits<unsigned int>::max (),
         std::numeric_limits<unsigned int>::max ()
     };
     int it = 0;
@@ -284,33 +287,7 @@ std::pair<unsigned int, unsigned int> loadTextures (Material mat, std::string pa
         }
 #endif
 
-        unsigned int textureID;
-        glGenTextures(1, &textureID);
-
-        int width, height, nrComponents;
-        unsigned char *data = stbi_load (filename.c_str(), &width, &height, &nrComponents, 0);
-        if (data) {
-            GLenum format;
-            if (nrComponents == 1) format = GL_RED;
-            else if (nrComponents == 3) format = GL_RGB;
-            else if (nrComponents == 4) format = GL_RGBA;
-
-            glBindTexture (GL_TEXTURE_2D, textureID);
-            glTexImage2D (GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap (GL_TEXTURE_2D);
-
-            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            stbi_image_free (data);
-        }
-        else
-        {
-            std::cout << "Texture failed to load at path: " << path << std::endl;
-            stbi_image_free (data);
-        }
+        unsigned int textureID = ModelImporter::_loadTex (filename);
 
         Mesh::loaded_tex_rel_path[map] = textureID;
 
@@ -318,4 +295,36 @@ std::pair<unsigned int, unsigned int> loadTextures (Material mat, std::string pa
     }
 
     return ret;
+}
+
+unsigned int ModelImporter::_loadTex (std::string filename) {
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrComponents;
+    unsigned char *data = stbi_load (filename.c_str(), &width, &height, &nrComponents, 0);
+    if (data) {
+        GLenum format;
+        if (nrComponents == 1) format = GL_RED;
+        else if (nrComponents == 3) format = GL_RGB;
+        else if (nrComponents == 4) format = GL_RGBA;
+
+        glBindTexture (GL_TEXTURE_2D, textureID);
+        glTexImage2D (GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap (GL_TEXTURE_2D);
+
+        glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free (data);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << filename << std::endl;
+        stbi_image_free (data);
+    }
+
+    return textureID;
 }

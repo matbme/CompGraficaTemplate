@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <array>
+#include <limits>
 #include <map>
 #include <memory>
 #include <vector>
@@ -60,14 +61,20 @@ public:
     void rescale (glm::vec3 scaleFactors, bool reset = false);
 
     void update ();
+    void setShader (std::shared_ptr<Shader> shader);
 
-    void setShader (Shader *shader);
+    glm::vec3 get_center_pos () { return this->center_pos; }
+
+    void set_highlight (bool value) { this->highlight = value; }
 private:
     glm::mat4 model;
     glm::vec3 pos, scale;
     float angle;
+    bool highlight;
 
-    Shader *shader;
+    glm::vec3 center_pos;
+
+    std::shared_ptr<Shader> shader;
 
     unsigned int VAO, VBO, EBO;
 };

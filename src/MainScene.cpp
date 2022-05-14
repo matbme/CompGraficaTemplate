@@ -64,7 +64,7 @@ void MainScene::update () {
 
     if (cam->changed ()) {
         view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
-        projection = glm::perspective(glm::radians(cam->fov), (GLfloat) Scene::window_width / (GLfloat) Scene::window_height, 0.1f, 100.0f);  
+        projection = glm::perspective(glm::radians(cam->fov), (GLfloat) Scene::window_width / (GLfloat) Scene::window_height, 0.1f, 100.0f);
 
         glUniformMatrix4fv (viewLoc, 1, GL_FALSE, glm::value_ptr (view));
         glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
@@ -72,19 +72,21 @@ void MainScene::update () {
 }
 
 void MainScene::setupScene () {
+    this->addShaders ("shaders/template_vs.glsl", "shaders/template_fs.glsl");
+
     std::string path ("/home/matbme/Downloads/3D_Models/Pokemon/Pikachu.obj");
     auto pikachu = ModelImporter::Obj::import (path);
-    pikachu->set_shader (shader);
+    pikachu->set_shader_for_all (shader);
 
     path = "/home/matbme/Downloads/3D_Models/Pokemon/PikachuF.obj";
     auto pikachuF = ModelImporter::Obj::import (path);
-    pikachuF->set_shader (shader);
+    pikachuF->set_shader_for_all (shader);
 
     pikachuF->translate (glm::vec3 (8.0f, 0.0f, 0.0f));
     pikachuF->rescale (glm::vec3 (0.1f, 0.1f, 0.1f));
 
-    add_object (&pikachu);
-    add_object (&pikachuF);
+    this->add_object (pikachu);
+    this->add_object (pikachuF);
 
     view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
 }
