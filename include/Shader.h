@@ -2,6 +2,8 @@
 #define SHADER_H
 
 #include <fstream>
+#include <glm/fwd.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -106,6 +108,10 @@ public:
 
     inline void setFloat(const std::string &name, float value) const {
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+    }
+
+    inline void setVec3(const std::string &name, glm::vec3& value) const {
+        glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
     }
 };
 

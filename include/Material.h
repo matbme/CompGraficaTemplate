@@ -16,10 +16,10 @@ public:
     float get_optical_density () { return this->ni; }
     float get_dissolve () { return this->d; }
     int get_illum () { return this->illum; }
-    glm::vec3 get_transmission_filter () { return this->tf; }
-    glm::vec3 get_ambient_refl () { return this->ka; }
-    glm::vec3 get_diffuse_refl () { return this->kd; }
-    glm::vec3 get_specular_refl () { return this->ks; }
+    glm::vec3& get_transmission_filter () { return this->tf; }
+    glm::vec3& get_ambient_refl () { return this->ka; }
+    glm::vec3& get_diffuse_refl () { return this->kd; }
+    glm::vec3& get_specular_refl () { return this->ks; }
     std::string get_ka_tex_map () { return this->map_ka; }
     std::string get_kd_tex_map () { return this->map_kd; }
 

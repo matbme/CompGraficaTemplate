@@ -13,6 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // Local
+#include "Light.h"
 #include "Model.h"
 #include "Shader.h"
 #include "KeyEvent.h"
@@ -70,6 +71,10 @@ protected:
 
     // Objetos na cena
     std::vector<std::unique_ptr<Model>> objects;
+
+    // Lights
+    std::unique_ptr<DirectionalLight> dirLight;
+    std::vector<std::unique_ptr<PointLight>> pointLights;
 
     // Tecla
     static inline const bool key_is_pressed (int key) {

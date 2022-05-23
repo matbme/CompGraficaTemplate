@@ -86,6 +86,9 @@ void Scene::render () {
         obj->update ();
         obj->draw();
     }
+
+	GLint viewPosLoc = glGetUniformLocation(shader->ID, "viewPos");
+	glUniform3f(viewPosLoc, cam->cameraPos.x, cam->cameraPos.y, cam->cameraPos.z);
 }
 
 void Scene::run () {

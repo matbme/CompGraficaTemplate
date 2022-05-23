@@ -74,19 +74,67 @@ void MainScene::update () {
 void MainScene::setupScene () {
     this->addShaders ("shaders/template_vs.glsl", "shaders/template_fs.glsl");
 
+    // Point lights are cubes
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+    };
+
+    // Load models
+    // Male Pikachu
     std::string path ("/home/matbme/Downloads/3D_Models/Pokemon/Pikachu.obj");
     auto pikachu = ModelImporter::Obj::import (path);
     pikachu->set_shader_for_all (shader);
+    this->add_object (pikachu);
 
+    // Female Pikachu
     path = "/home/matbme/Downloads/3D_Models/Pokemon/PikachuF.obj";
     auto pikachuF = ModelImporter::Obj::import (path);
     pikachuF->set_shader_for_all (shader);
-
     pikachuF->translate (glm::vec3 (8.0f, 0.0f, 0.0f));
     pikachuF->rescale (glm::vec3 (0.1f, 0.1f, 0.1f));
-
-    this->add_object (pikachu);
     this->add_object (pikachuF);
+
+    // Light cubes
+    path = "/home/matbme/Downloads/3D_Models/Cube/cube.obj";
+    for (auto pos : pointLightPositions) {
+        auto light_cube = ModelImporter::Obj::import (path);
+        light_cube->set_shader_for_all (shader);
+        light_cube->translate (pos);
+        this->add_object(light_cube);
+    }
+
+    // Load lights
+    auto ambient_light  = glm::vec3 (0.2f, 0.2f, 0.2f);
+    auto diffuse_light  = glm::vec3 (0.5f, 0.5f, 0.5f);
+    auto specular_light = glm::vec3 (1.0f, 1.0f, 1.0f);
+
+    this->dirLight = std::make_unique<DirectionalLight> (
+        glm::vec3 (-0.2f, -1.0f, -0.3f),
+        ambient_light,
+        diffuse_light,
+        specular_light
+    );
+    this->dirLight->add_to_shader (this->shader, "dirLight");
+
+    float constant = 1.0f;
+    float linear = 0.09f;
+    float quadratic = 0.032f;
+
+    for (auto pos : pointLightPositions) {
+        auto pl = std::make_unique<PointLight> (
+            pos,
+            ambient_light, diffuse_light, specular_light,
+            constant, linear, quadratic
+        );
+
+        this->pointLights.push_back (std::move (pl));
+    }
+
+    for (int i = 0 ; i < 4 ; i++)
+        this->pointLights[i]->add_to_shader (this->shader, "pointLights[" + std::to_string(i) + "]");
 
     view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
 }
