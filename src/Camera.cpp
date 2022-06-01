@@ -85,9 +85,6 @@ void Camera::mouse_callback (GLFWwindow* window, double xpos, double ypos) {
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    set_yaw_bind (get_yaw_bind () + xoffset);
-    set_pitch_bind (get_pitch_bind () + yoffset);
-
     // Raycasting
     if (Camera::initialized && (glfwGetTime() - Camera::last_ray_test_run) >= 0.2) {
         Camera::closest_intersect = Camera::get_closest_intersect ();
@@ -155,7 +152,6 @@ void Camera::mouse_button_callback(GLFWwindow *window, int button, int action, i
 // Ray picking based on Anton's implementation
 inline std::unique_ptr<Model> *Camera::get_closest_intersect () {
     std::unique_ptr<Model> *closest_intersect = nullptr;
-    glm::vec3 ray = Camera::_get_ray_from_mouse(*Camera::scene_width/2.0, *Camera::scene_height/2.0);
 
     float closest_intersection = 0.0f;
     for (auto&& obj : *objects) {
@@ -163,10 +159,10 @@ inline std::unique_ptr<Model> *Camera::get_closest_intersect () {
 
         for (auto mesh : obj->meshes) {
             float t_dist = 0.0f;
-            if (Camera::_ray_sphere (get_cameraPos_bind(),
-                                     ray+get_cameraFront_bind(),
-                                     mesh.get_center_pos(),
-                                     3.0f,
+            if (Camera::_ray_sphere (get_cameraPos_bind (),
+                                     Camera::_create_ray (),
+                                     mesh.get_pos (),
+                                     1.0f,
                                      t_dist))
             {
                 // if more than one sphere is in path of ray, only use the closest one
@@ -182,28 +178,18 @@ inline std::unique_ptr<Model> *Camera::get_closest_intersect () {
     return closest_intersect;
 }
 
-inline glm::vec3 Camera::_get_ray_from_mouse (float mouse_x, float mouse_y) {
-    // screen space (viewport coordinates)
-    float x = ( 2.0f * mouse_x ) / *Camera::scene_width - 1.0f;
-    float y = 1.0f - ( 2.0f * mouse_y ) / *Camera::scene_width;
-    float z = 1.0f;
+inline glm::vec3 Camera::_create_ray () {
+    // these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
+    float mouseX = 0;
+    float mouseY = 0;
 
-    // normalised device space
-    glm::vec3 ray_nds = glm::vec3 (x, y, z);
+    glm::mat4 invVP = glm::inverse(*proj_mat * *view_mat);
+    glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
+    glm::vec4 worldPos = invVP * screenPos;
 
-    // clip space
-    glm::vec4 ray_clip = glm::vec4 (ray_nds.x, ray_nds.y, -1.0, 1.0);
+    glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
 
-    // eye space
-    glm::vec4 ray_eye = glm::inverse (*proj_mat) * ray_clip;
-    ray_eye = glm::vec4 (ray_eye.x, ray_eye.y, -1.0, 0.0);
-
-    // world space
-    glm::vec3 ray_wor = glm::vec3 (glm::inverse (*view_mat) * ray_eye);
-
-    // don't forget to normalise the vector at some point
-    ray_wor = glm::normalize (ray_wor);
-    return ray_wor;
+    return dir;
 }
 
 inline bool Camera::_ray_sphere (glm::vec3 ray_origin,

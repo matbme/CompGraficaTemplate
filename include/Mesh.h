@@ -63,16 +63,13 @@ public:
     void update ();
     void setShader (std::shared_ptr<Shader> shader);
 
-    glm::vec3 get_center_pos () { return this->center_pos; }
-
     void set_highlight (bool value) { this->highlight = value; }
+    glm::vec3 get_pos () { return this->pos; }
 private:
     glm::mat4 model;
     glm::vec3 pos, scale;
     float angle;
     bool highlight;
-
-    glm::vec3 center_pos;
 
     std::shared_ptr<Shader> shader;
 

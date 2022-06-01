@@ -99,7 +99,7 @@ private:
      static std::function<void (bool)> set_cameraUpdated_bind;
 
     // Ray casting
-    static inline glm::vec3 _get_ray_from_mouse (float mouse_x, float mouse_y);
+    static glm::vec3 _create_ray ();
     static inline std::unique_ptr<Model> *get_closest_intersect ();
     static inline bool _ray_sphere (glm::vec3 ray_origin_wor,
                                     glm::vec3 ray_direction_wor,

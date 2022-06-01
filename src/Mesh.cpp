@@ -46,26 +46,6 @@ void Mesh::setup () {
                            sizeof (Vertex), (void *) offsetof (Vertex, TexCoords));
 
     glBindVertexArray (0);
-
-    // Find mesh center
-    float minX = std::numeric_limits<float>::max(), maxX = std::numeric_limits<float>::lowest();
-    float minY = std::numeric_limits<float>::max(), maxY = std::numeric_limits<float>::lowest();
-    float minZ = std::numeric_limits<float>::max(), maxZ = std::numeric_limits<float>::lowest();
-
-    for (auto vert : vertices) {
-        if (vert.Position.x < minX) minX = vert.Position.x;
-        else if (vert.Position.x > maxX) maxX = vert.Position.x;
-
-        if (vert.Position.y < minY) minY = vert.Position.y;
-        else if (vert.Position.y > maxY) maxY = vert.Position.y;
-
-        if (vert.Position.z < minZ) minZ = vert.Position.z;
-        else if (vert.Position.z > maxZ) maxZ = vert.Position.z;
-    }
-
-    this->center_pos = glm::vec3 (maxX - minX,
-                                  maxY - minY,
-                                  maxZ - minZ);
 }
 
 void Mesh::draw () {
