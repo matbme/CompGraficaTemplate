@@ -12,6 +12,8 @@ public:
 
     void update () override;
     void setupScene () override;
+private:
+    const std::string models_path = "/home/matbme/Downloads/3D_Models";
 };
 
 #endif

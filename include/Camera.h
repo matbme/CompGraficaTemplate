@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 
-#include "Model.h"
+#include "Object.h"
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -61,7 +61,7 @@ public:
     // Values used during ray casting operations
     static GLuint *scene_width, *scene_height;
     static glm::mat4 *proj_mat, *view_mat;
-    static std::vector<std::unique_ptr<Model>> *objects;
+    static std::vector<std::unique_ptr<Object>> *objects;
 
     static bool initialized;
     static GLfloat last_ray_test_run;

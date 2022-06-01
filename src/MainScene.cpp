@@ -27,28 +27,28 @@ void MainScene::update () {
 
     if (key_is_pressed (GLFW_KEY_X)) {
         for (auto&& obj : objects)
-            obj->rotate (glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
+            obj->get_model ()->rotate (glm::radians (2.0f), glm::vec3 (1.0f, 0.0f, 0.0f));
     }
 
     if (key_is_pressed (GLFW_KEY_Y)) {
         for (auto&& obj : objects)
-            obj->rotate (glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
+            obj->get_model ()->rotate (glm::radians (2.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
     }
 
     if (key_is_pressed (GLFW_KEY_Z)) {
         for (auto&& obj : objects)
-            obj->rotate (glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
+            obj->get_model ()-> rotate (glm::radians (2.0f), glm::vec3 (0.0f, 0.0f, 1.0f));
     }
 
     if (key_is_pressed (GLFW_KEY_MINUS)) {
         for (auto&& obj : objects)
-            obj->rescale (glm::vec3 (0.9f, 0.9f, 0.9f));
+            obj->get_model ()->rescale (glm::vec3 (0.9f, 0.9f, 0.9f));
         KeyEvent::tempLockKey(GLFW_KEY_MINUS, 0.25);
     }
 
     if (key_is_pressed (GLFW_KEY_RIGHT_SHIFT) && key_is_pressed (GLFW_KEY_EQUAL)) {
         for (auto&& obj : objects)
-            obj->rescale (glm::vec3 (1.1f, 1.1f, 1.1f));
+            obj->get_model ()->rescale (glm::vec3 (1.1f, 1.1f, 1.1f));
         KeyEvent::tempLockKey(GLFW_KEY_EQUAL, 0.25);
     }
 
@@ -84,26 +84,24 @@ void MainScene::setupScene () {
 
     // Load models
     // Male Pikachu
-    std::string path ("/home/matbme/Downloads/3D_Models/Pokemon/Pikachu.obj");
-    auto pikachu = ModelImporter::Obj::import (path);
-    pikachu->set_shader_for_all (shader);
+    auto pikachu = std::make_unique<Object> (models_path + "/Pokemon/Pikachu.obj");
+    pikachu->setup ({.shader = shader});
     this->add_object (pikachu);
 
     // Female Pikachu
-    path = "/home/matbme/Downloads/3D_Models/Pokemon/PikachuF.obj";
-    auto pikachuF = ModelImporter::Obj::import (path);
-    pikachuF->set_shader_for_all (shader);
-    pikachuF->translate (glm::vec3 (8.0f, 0.0f, 0.0f));
-    pikachuF->rescale (glm::vec3 (0.1f, 0.1f, 0.1f));
+    auto pikachuF = std::make_unique<Object> (models_path + "/Pokemon/PikachuF.obj");
+    pikachuF->setup ({
+        .shader = shader,
+        .position = glm::vec3 (8.0f, 0.0f, 0.0f),
+        .scale = glm::vec3 (0.1f, 0.1f, 0.1f)
+    });
     this->add_object (pikachuF);
 
     // Light cubes
-    path = "/home/matbme/Downloads/3D_Models/Cube/cube.obj";
     for (auto pos : pointLightPositions) {
-        auto light_cube = ModelImporter::Obj::import (path);
-        light_cube->set_shader_for_all (shader);
-        light_cube->translate (pos);
-        this->add_object(light_cube);
+        auto light_cube = std::make_unique<Object> (models_path + "/Cube/cube.obj");
+        light_cube->setup ({.shader = shader, .position = pos});
+        this->add_object (light_cube);
     }
 
     // Load lights

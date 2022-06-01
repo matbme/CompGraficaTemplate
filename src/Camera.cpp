@@ -22,7 +22,7 @@ GLuint* Camera::scene_height;
 GLuint* Camera::scene_width;
 glm::mat4* Camera::proj_mat;
 glm::mat4* Camera::view_mat;
-std::vector<std::unique_ptr<Model>>* Camera::objects;
+std::vector<std::unique_ptr<Object>> *Camera::objects;
 bool Camera::initialized = false;
 
 // Internal use
@@ -155,9 +155,9 @@ inline std::unique_ptr<Model> *Camera::get_closest_intersect () {
 
     float closest_intersection = 0.0f;
     for (auto&& obj : *objects) {
-        obj->remove_highlight(); // Clear previous highlights
+        obj->get_model ()->remove_highlight (); // Clear previous highlights
 
-        for (auto mesh : obj->meshes) {
+        for (auto mesh : obj->get_model ()->meshes) {
             float t_dist = 0.0f;
             if (Camera::_ray_sphere (get_cameraPos_bind (),
                                      Camera::_create_ray (),
@@ -167,7 +167,7 @@ inline std::unique_ptr<Model> *Camera::get_closest_intersect () {
             {
                 // if more than one sphere is in path of ray, only use the closest one
                 if (closest_intersect == nullptr || t_dist < closest_intersection ) {
-                    closest_intersect = &obj;
+                    closest_intersect = &obj->get_model ();
                     closest_intersection = t_dist;
                 }
                 break;

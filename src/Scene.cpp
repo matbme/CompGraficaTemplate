@@ -83,8 +83,8 @@ void Scene::render () {
     }
 
     for (auto&& obj : objects) {
-        obj->update ();
-        obj->draw();
+        obj->get_model ()->update ();
+        obj->get_model ()->draw ();
     }
 
 	GLint viewPosLoc = glGetUniformLocation(shader->ID, "viewPos");
@@ -140,7 +140,7 @@ void Scene::setupCamera () {
     Camera::initialized = true;
 }
 
-unsigned int Scene::add_object (std::unique_ptr<Model>& object) {
+unsigned int Scene::add_object (std::unique_ptr<Object>& object) {
     this->objects.push_back (std::move (object));
     return this->objects.size ();
 }

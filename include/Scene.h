@@ -15,6 +15,7 @@
 // Local
 #include "Light.h"
 #include "Model.h"
+#include "Object.h"
 #include "Shader.h"
 #include "KeyEvent.h"
 #include "Camera.h"
@@ -40,7 +41,7 @@ public:
 	virtual void setupScene () {}
 	void setupCamera ();
 	unsigned int loadTexture (std::string filename);
-    unsigned int add_object (std::unique_ptr<Model>& object);
+    unsigned int add_object (std::unique_ptr<Object>& object);
 
     // Callbacks de input
 	static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -70,7 +71,7 @@ protected:
     std::shared_ptr<Camera> cam;
 
     // Objetos na cena
-    std::vector<std::unique_ptr<Model>> objects;
+    std::vector<std::unique_ptr<Object>> objects;
 
     // Lights
     std::unique_ptr<DirectionalLight> dirLight;

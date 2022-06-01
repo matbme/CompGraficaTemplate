@@ -14,11 +14,12 @@
 
 #include "Model.h"
 #include "Material.h"
+#include "Object.h"
 
 namespace ModelImporter {
 
 namespace Obj {
-std::unique_ptr<Model> import (std::string const &path);
+void import (Object *obj);
 inline std::array<int, 3> _tokenize_face_param (std::string face_param);
 
 inline std::pair<std::unique_ptr<Model> ,unsigned int> _add_vertex (

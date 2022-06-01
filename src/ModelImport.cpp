@@ -8,7 +8,7 @@ constexpr unsigned int hash(const char* str, int h = 0) {
     return !str[h] ? 5381 : (hash(str, h+1)*33) ^ str[h];
 }
 
-std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
+void ModelImporter::Obj::import (Object *obj) {
     auto ret_model = std::make_unique<Model> ();
     bool new_mesh = false;
 
@@ -16,6 +16,8 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
     std::vector<glm::vec3> temp_vertex_pos;
     std::vector<glm::vec3> temp_vertex_norm;
     std::vector<glm::vec2> temp_vertex_tex;
+
+    std::string path = obj->get_model_filename ();
 
     std::ifstream file (path);
     std::string line;
@@ -36,7 +38,7 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
                 break;
             }
             case hash ("o"): {
-                std::cout << "Is o" << std::endl;
+                obj->set_name (tokens[1]);
                 break;
             }
             case hash ("v"): { // Vertex position
@@ -78,7 +80,7 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
                 break;
             }
             case hash ("s"): {
-                std::cout << "Is s" << std::endl;
+                // No smoothing for us
                 break;
             }
             case hash ("f"): { // Face
@@ -95,14 +97,14 @@ std::unique_ptr<Model> ModelImporter::Obj::import (std::string const &path) {
                 break;
             }
             default: {
-                std::cout << "Something else" << std::endl;
+                std::cout << "Unprocessed token: " << tokens[0] << std::endl;
             }
         }
     }
 
     ret_model->setup_meshes ();
 
-    return ret_model;
+    obj->add_model(std::move (ret_model));
 }
 
 inline std::array<int, 3> ModelImporter::Obj::_tokenize_face_param (std::string face_param) {
@@ -216,7 +218,7 @@ std::map<std::string, Material> ModelImporter::Mtl::import (std::string const &p
                 ret_mats[current_mtl].set_kd_tex_map (tokens[1]);
                 break;
             default:
-                std::cout << "Is something else" << std::endl;
+                std::cout << "Unprocessed token: " << tokens[0] << std::endl;
                 break;
         }
     }
@@ -229,7 +231,7 @@ std::string ModelImporter::extract_path (std::string const &path) {
     std::string component;
     std::string ret_path;
 
-    char os_sep = 
+    char os_sep =
 #ifdef _WIN32
     '\\'
 #else
