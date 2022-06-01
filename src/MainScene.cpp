@@ -104,6 +104,14 @@ void MainScene::setupScene () {
         this->add_object (light_cube);
     }
 
+    // Bunny
+    auto bunny = std::make_unique<Object> (models_path + "/Classic-NoTexture/bunny.obj");
+    bunny->setup ({
+        .shader = shader,
+        .position = glm::vec3 (4.0f, -2.0f, 0.0f)
+    });
+    this->add_object (bunny);
+
     // Load lights
     auto ambient_light  = glm::vec3 (0.2f, 0.2f, 0.2f);
     auto diffuse_light  = glm::vec3 (0.5f, 0.5f, 0.5f);

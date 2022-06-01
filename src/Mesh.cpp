@@ -58,21 +58,23 @@ void Mesh::draw () {
 
             textureType_number[texture.type]++;
 
-            shader->setFloat(
-                ("material." +
-                TextureType_toString (texture.type) +
-                std::to_string (textureType_number[texture.type])
-            ).c_str (),
-                texture_number - GL_TEXTURE0
-            );
+            /* shader->setFloat( */
+            /*     ("material." + */
+            /*     TextureType_toString (texture.type) + */
+            /*     std::to_string (textureType_number[texture.type]) */
+            /* ).c_str (), */
+            /*     texture_number - GL_TEXTURE0 */
+            /* ); */
 
             glBindTexture (GL_TEXTURE_2D, texture.id);
         }
 
+        glUniform1i (glGetUniformLocation (shader->ID, "isTextured"), 1);
         glActiveTexture (GL_TEXTURE0);
     }
     else {
         // Renders black surface
+        glUniform1i (glGetUniformLocation (shader->ID, "isTextured"), 0);
         glBindTexture (GL_TEXTURE_2D, 0);
         glActiveTexture (0);
     }

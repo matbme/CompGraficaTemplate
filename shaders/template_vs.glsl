@@ -7,11 +7,13 @@ out vec3 ScaledNormal;
 out vec3 FragPos;
 out vec2 TexCoords;
 flat out int Highlight;
+flat out int IsTextured;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform int texHighlight;
+uniform int isTextured;
 
 void main()
 {
@@ -20,4 +22,5 @@ void main()
     FragPos = vec3(model * vec4(position, 1.0f));
     TexCoords = aTexCoord;
     Highlight = texHighlight;
+    IsTextured = isTextured;
 }
