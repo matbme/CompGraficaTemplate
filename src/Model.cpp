@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "Utils.h"
 
 // Reference to https://learnopengl.com/Model-Loading/Model
 Model::Model () {}
@@ -68,5 +69,37 @@ void Model::highlight () {
 void Model::remove_highlight () {
     for (int i = 0 ; i < meshes.size() ; i++) {
         meshes[i].set_highlight(false);
+    }
+}
+
+void Model::apply (std::string action, std::vector<std::string>::iterator args) {
+    switch (Utils::hash (action.c_str ())) {
+        case Utils::hash ("position"): {
+            this->translate (glm::vec3 (
+                std::strtof((++args)->c_str (), NULL),
+                std::strtof((++args)->c_str (), NULL),
+                std::strtof((++args)->c_str (), NULL)
+            ));
+            break;
+        }
+        case Utils::hash ("rotation"): {
+            auto angle = std::strtof((++args)->c_str (), NULL);
+            this->rotate (
+                glm::radians(angle),
+                Model::axis_vector((++args)->c_str ()[0])
+            );
+            break;
+        }
+        case Utils::hash ("scale"): {
+            this->rescale (glm::vec3 (
+                std::strtof((++args)->c_str (), NULL),
+                std::strtof((++args)->c_str (), NULL),
+                std::strtof((++args)->c_str (), NULL)
+            ));
+            break;
+        }
+        default: {
+            throw std::invalid_argument ("Object has no action `" + action + "`.");
+        }
     }
 }

@@ -1,11 +1,15 @@
 #include "Scene.h"
-#include "KeyEvent.h"
 
 bool Scene::window_resized = false;
 GLuint Scene::window_width = 0;
 GLuint Scene::window_height = 0;
 
-Scene::Scene (GLuint width, GLuint height, std::string window_name) {
+Scene::Scene (GLuint width,
+              GLuint height,
+              std::string window_name,
+              std::string vertex_shader,
+              std::string fragment_shader)
+{
     glfwInit ();
 
 	glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -47,6 +51,12 @@ Scene::Scene (GLuint width, GLuint height, std::string window_name) {
         std::cout << "Failed to initialize GLAD" << std::endl;
 
     Scene::window_resized = true;
+
+    if (vertex_shader != "" && fragment_shader != "")
+        this->shader = std::make_shared<Shader> (
+            vertex_shader.c_str(),
+            fragment_shader.c_str()
+        );
 }
 
 Scene::~Scene () { }
@@ -92,10 +102,28 @@ void Scene::render () {
 }
 
 void Scene::run () {
-    setupScene ();
+    view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
+    // Setup lights
+    this->dirLight->add_to_shader (this->shader, "dirLight");
+    for (int i = 0 ; i < this->pointLights.size () ; i++)
+        this->pointLights[i]->add_to_shader (this->shader, "pointLights[" + std::to_string(i) + "]");
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents ();
-        update ();
+        update_func (this->cam, this->window, this->objects);
+
+        if (cam->changed ()) {
+            view = glm::lookAt (cam->cameraPos, cam->cameraPos+cam->cameraFront, cam->cameraUp);
+            projection = glm::perspective(
+                glm::radians(cam->fov),
+                (GLfloat) Scene::window_width / (GLfloat) Scene::window_height,
+                0.1f,
+                100.0f
+            );
+            glUniformMatrix4fv (viewLoc, 1, GL_FALSE, glm::value_ptr (view));
+            glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
+        }
+
         render ();
         glfwSwapBuffers (window);
     }
@@ -127,6 +155,8 @@ void Scene::setupCamera () {
     glUniformMatrix4fv (projLoc, 1, GL_FALSE, glm::value_ptr (projection));
 
 	glEnable (GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glEnable(GL_FRAMEBUFFER_SRGB);
 
     // Enable face culling
     glEnable (GL_CULL_FACE);
@@ -143,4 +173,13 @@ void Scene::setupCamera () {
 unsigned int Scene::add_object (std::unique_ptr<Object>& object) {
     this->objects.push_back (std::move (object));
     return this->objects.size ();
+}
+
+void Scene::add_dirLight (std::unique_ptr<DirectionalLight>& light) {
+    assert (this->dirLight == nullptr);
+    this->dirLight.swap(light);
+}
+
+void Scene::add_pointLight (std::unique_ptr<PointLight>& light) {
+    this->pointLights.push_back (std::move(light));
 }

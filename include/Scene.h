@@ -2,10 +2,9 @@
 #define SCENE_H
 
 // Builtin
-#include <iostream>
-#include <string>
-#include <vector>
+#include <functional>
 #include <memory>
+#include <vector>
 
 // GLM
 #include <glm/glm.hpp>
@@ -14,7 +13,6 @@
 
 // Local
 #include "Light.h"
-#include "Model.h"
 #include "Object.h"
 #include "Shader.h"
 #include "KeyEvent.h"
@@ -22,7 +20,12 @@
 
 class Scene {
 public:
-    Scene (GLuint width, GLuint height, std::string window_name);
+    Scene (GLuint width,
+           GLuint height,
+           std::string window_name,
+           std::string vertex_shader,
+           std::string fragment_shader
+    );
     ~Scene ();
 
     // Atualiza viewport e dimensoes
@@ -33,15 +36,21 @@ public:
 	void finish ();
 
     // Gerenciamento do runtime
-    virtual void update () {}
+    std::function<void (std::shared_ptr<Camera>&, GLFWwindow *, std::vector<std::unique_ptr<Object>>&)> update_func;
     void render ();
 
     // Import de elementos na cena
 	void addShaders (std::string vertex_path, std::string frag_path);
-	virtual void setupScene () {}
 	void setupCamera ();
-	unsigned int loadTexture (std::string filename);
+
     unsigned int add_object (std::unique_ptr<Object>& object);
+    void add_dirLight (std::unique_ptr<DirectionalLight>& light);
+    void add_pointLight (std::unique_ptr<PointLight>& light);
+
+    Object *get_last_object () { return this->objects.back ().get (); }
+    DirectionalLight *get_dirLight () { return this->dirLight.get (); }
+    PointLight *get_last_pointLight () { return this->pointLights.back ().get (); }
+    std::shared_ptr<Shader> get_shader () { return this->shader; }
 
     // Callbacks de input
 	static void key_callback (GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -76,11 +85,6 @@ protected:
     // Lights
     std::unique_ptr<DirectionalLight> dirLight;
     std::vector<std::unique_ptr<PointLight>> pointLights;
-
-    // Tecla
-    static inline const bool key_is_pressed (int key) {
-        return KeyEvent::keys[key] == KeyEvent::PRESSED;
-    }
 };
 
 #endif

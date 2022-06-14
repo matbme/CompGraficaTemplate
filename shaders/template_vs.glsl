@@ -18,7 +18,7 @@ uniform int isTextured;
 void main()
 {
     gl_Position = projection * view * model * vec4(position, 1.0f);
-    ScaledNormal = aNormal;
+    ScaledNormal = aNormal * 2.0 - 1.0;
     FragPos = vec3(model * vec4(position, 1.0f));
     TexCoords = aTexCoord;
     Highlight = texHighlight;

@@ -2,10 +2,14 @@
 #define OBJECT_H
 
 #include "Model.h"
+#include "Utils.h"
+#include "Shader.h"
 
+#include <any>
 #include <memory>
 #include <optional>
 #include <string>
+#include <variant>
 
 struct ObjectSetupArgs {
     std::shared_ptr<Shader> shader;
@@ -17,6 +21,7 @@ struct ObjectSetupArgs {
 class Object {
 public:
     Object (std::string model_filename);
+    Object (std::vector<std::pair<std::string, std::any>> params);
 
     std::string get_model_filename () { return this->model_filename; }
     std::string get_name () { return this->name; }
@@ -26,6 +31,7 @@ public:
 
     void add_model (std::unique_ptr<Model> model);
     void setup (ObjectSetupArgs args);
+    void apply (Object *instance, std::string action, std::vector<std::string>::iterator args);
 private:
     std::string model_filename;
     std::unique_ptr<Model> model;

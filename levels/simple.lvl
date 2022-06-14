@@ -1,0 +1,62 @@
+# set scene properties
+set window_width 1920
+set window_height 1080
+set window_name "Level inicial"
+set shaders "shaders/template_vs.glsl" "shaders/template_fs.glsl"
+
+# we have to call the scene initializer before any `add` and after all `set`s
+# here seems like a good spot
+init_scene
+
+# define scene elements
+def tree -> Object {
+    load "models/Survival/tree.obj"
+}
+
+def sun -> DirectionalLight {
+    direction -0.2 -1.0 -0.3
+    ambient 0.2 0.2 0.2
+    diffuse 0.5 0.5 0.5
+    specular 1.0 1.0 1.0
+}
+
+def point -> PointLight {
+    ambient 0.2 0.2 0.2
+    diffuse 0.5 0.5 0.5
+    specular 1.0 1.0 1.0
+    constant 1.0
+    linear 0.09
+    quadratic 0.032
+}
+
+
+# add elements to scene
+add tree {
+    position 0.0 0.0 0.0
+    rotation 00.0 x
+    scale 0.5 0.5 0.5
+}
+
+add tree {
+    position 0.0 0.0 1.0
+    rotation 90.0 z
+    scale 1.5 1.5 1.5
+}
+
+add sun
+
+add point {
+    position 0.7 0.2 2.0
+}
+
+add point {
+    position 2.3 -3.3 -4.0
+}
+
+add point {
+    position -4.0 2.0 -12.0
+}
+
+add point {
+    position 0.0 0.0 -3.0
+}

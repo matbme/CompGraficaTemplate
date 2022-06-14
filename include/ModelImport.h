@@ -15,6 +15,7 @@
 #include "Model.h"
 #include "Material.h"
 #include "Object.h"
+#include "Utils.h"
 
 namespace ModelImporter {
 
@@ -36,7 +37,6 @@ std::map<std::string, Material> import (std::string const &path);
 
 std::string extract_path (std::string const &path);
 unsigned int _loadTex (std::string filename);
-inline std::vector<std::string> tokenize_line (std::string line);
 }
 
 #endif

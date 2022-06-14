@@ -73,17 +73,23 @@ void Mesh::draw () {
         glActiveTexture (GL_TEXTURE0);
     }
     else {
-        // Renders black surface
         glUniform1i (glGetUniformLocation (shader->ID, "isTextured"), 0);
         glBindTexture (GL_TEXTURE_2D, 0);
         glActiveTexture (0);
+
+        if (this->material != nullptr)
+            this->shader->setVec3 ("material.untex_diffuse", this->material->get_diffuse_refl ());
     }
 
     if (highlight) glUniform1i (glGetUniformLocation (shader->ID, "texHighlight"), 1);
     else glUniform1i (glGetUniformLocation (shader->ID, "texHighlight"), 0);
 
-    this->shader->setVec3 ("material.specular", this->material->get_specular_refl ());
-    this->shader->setFloat ("material.intensity", this->material->get_specular_exp ());
+    if (this->material != nullptr) {
+        this->shader->setVec3 ("material.ambient", this->material->get_ambient_refl ());
+        this->shader->setVec3 ("material.specular", this->material->get_specular_refl ());
+        this->shader->setFloat ("material.intensity", this->material->get_specular_exp ());
+        this->shader->setFloat ("material.illum", this->material->get_illum ());
+    }
 
     glBindVertexArray (VAO);
     glDrawElements (GL_TRIANGLES, indices.size (), GL_UNSIGNED_INT, 0);

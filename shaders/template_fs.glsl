@@ -2,9 +2,12 @@
 out vec4 color;
 
 struct Material {
+    vec3 ambient;
     sampler2D diffuse;
+    vec3 untex_diffuse;
     vec3 specular;
     float intensity;
+    int illum;
 };
 
 struct DirectionalLight {
@@ -41,7 +44,12 @@ uniform vec3 viewPos;
 
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-vec4 GetTexture();
+vec3 GetMaterialProperties(const uint type);
+vec3 GetMaterialDiffuse();
+
+// Kinda like an enum but not
+const uint AMBIENT = 0x00000001u;
+const uint DIFFUSE = 0x00000002u;
 
 void main() {
     // properties
@@ -55,17 +63,33 @@ void main() {
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
 
     // highlight object the player is looking at
-    if (Highlight == 1)
-        color = vec4(result, 1.0f) / vec4(0.5, 0.5, 0.5, 0.0);
-    else
+    /* if (Highlight == 1) */
+    /*     color = vec4(result, 1.0f) / vec4(0.5, 0.5, 0.5, 0.0); */
+    /* else */
         color = vec4(result, 1.0f);
 }
 
-vec4 GetTexture() {
+vec3 GetMaterialProperties(const uint type) {
+    if (type == AMBIENT) {
+        switch (material.illum) {
+            case 0:         // Color on and Ambient off
+                return GetMaterialDiffuse();
+            case 1:         // Color on and Ambient on
+                return material.ambient;
+            default:
+                return material.ambient;
+        }
+    }
+    else if (type == DIFFUSE) {
+        return GetMaterialDiffuse();
+    }
+}
+
+vec3 GetMaterialDiffuse() {
     if (IsTextured == 1)
-        return texture(material.diffuse, TexCoords);
+        return vec3(texture(material.diffuse, TexCoords));
     else
-        return vec4(ScaledNormal, 1.0f);
+        return material.untex_diffuse;
 }
 
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
@@ -79,8 +103,8 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.intensity);
 
     // combine results
-    vec3 ambient  = light.ambient  * vec3(GetTexture());
-    vec3 diffuse  = light.diffuse  * diff * vec3(GetTexture());
+    vec3 ambient  = light.ambient  * GetMaterialProperties(AMBIENT);
+    vec3 diffuse  = light.diffuse  * diff * GetMaterialProperties(DIFFUSE);
     vec3 specular = light.specular * spec * material.specular;
 
     return (ambient + diffuse + specular);
@@ -102,8 +126,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
         light.quadratic * (distance * distance));
 
     // combine results
-    vec3 ambient  = light.ambient  * vec3(GetTexture());
-    vec3 diffuse  = light.diffuse  * diff * vec3(GetTexture());
+    vec3 ambient  = light.ambient  * GetMaterialProperties(AMBIENT);
+    vec3 diffuse  = light.diffuse  * diff * GetMaterialProperties(DIFFUSE);
     vec3 specular = light.specular * spec * material.specular;
     ambient  *= attenuation;
     diffuse  *= attenuation;

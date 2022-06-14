@@ -3,10 +3,7 @@
 // Makes getting current mesh less spaghettity
 #define CURRENT_MESH ret_model->meshes.back()
 
-// Simple hashing function to compare instructions at O(n)
-constexpr unsigned int hash(const char* str, int h = 0) {
-    return !str[h] ? 5381 : (hash(str, h+1)*33) ^ str[h];
-}
+using namespace Utils;
 
 void ModelImporter::Obj::import (Object *obj) {
     auto ret_model = std::make_unique<Model> ();
@@ -31,7 +28,7 @@ void ModelImporter::Obj::import (Object *obj) {
             new_mesh = false;
         }
 
-        auto tokens = ModelImporter::tokenize_line (line);
+        auto tokens = tokenize_line (line);
         switch (hash (tokens[0].c_str ())) {
             case hash ("mtllib"): { // Import materials from
                 ret_model->materials = ModelImporter::Mtl::import ({ModelImporter::extract_path (path) + tokens[1]});
@@ -62,11 +59,12 @@ void ModelImporter::Obj::import (Object *obj) {
                 break;
             }
             case hash ("g"): { // New group
-                new_mesh = true;
+                if (tokens[1] != "off")
+                    new_mesh = true;
                 break;
             }
             case hash ("usemtl"): { // Use material for mesh
-                CURRENT_MESH.material = &ret_model->materials[tokens[1]];
+                CURRENT_MESH.material = std::make_shared<Material>(ret_model->materials[tokens[1]]);
                 auto [ka_tex_id, kd_tex_id] = loadTextures (*CURRENT_MESH.material,
                                                             ModelImporter::extract_path (path));
                 if (ka_tex_id != std::numeric_limits<unsigned int>::max()) {
@@ -168,7 +166,7 @@ std::map<std::string, Material> ModelImporter::Mtl::import (std::string const &p
         if (line == "") continue; // Ignore empty lines
         if (line[0] == '#') continue; // Ignore comments
 
-        auto tokens = ModelImporter::tokenize_line (line);
+        auto tokens = tokenize_line (line);
         switch (hash (tokens[0].c_str ())) {
             case hash ("newmtl"): // New material
                 ret_mats[tokens[1]]  = Material ();
@@ -249,16 +247,6 @@ std::string ModelImporter::extract_path (std::string const &path) {
 
     for (auto comp : path_components) ret_path += comp + os_sep;
     return ret_path;
-}
-
-inline std::vector<std::string> ModelImporter::tokenize_line(std::string line) {
-    std::vector<std::string> tokens;
-    std::istringstream iss (line);
-    std::copy (std::istream_iterator<std::string>(iss),
-               std::istream_iterator<std::string>(),
-               std::back_inserter(tokens));
-
-    return tokens;
 }
 
 // Friend of Material
