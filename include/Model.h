@@ -3,6 +3,7 @@
 
 #include <any>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -27,7 +28,8 @@ public:
 
     void apply (std::string action, std::vector<std::string>::iterator args);
 
-    BSpline anim_curve;
+    std::shared_ptr<Curves::BSpline> anim_curve;
+    int anim_frame = 0;
 
     void update ();
 

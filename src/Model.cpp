@@ -55,6 +55,16 @@ void Model::rescale (glm::vec3 scaleFactors, bool reset) {
 }
 
 void Model::update () {
+    // Apply animation
+    if (this->anim_curve != nullptr) {
+        if (anim_frame > this->anim_curve->curve.size () - 1) anim_frame = 0;
+        if (anim_frame > 0) {
+            auto offset = this->anim_curve->curve[anim_frame] - this->anim_curve->curve[anim_frame - 1];
+            this->translate (offset);
+        }
+        anim_frame++;
+    }
+
     for (auto mesh : meshes) {
         mesh.update ();
     }
@@ -99,8 +109,10 @@ void Model::apply (std::string action, std::vector<std::string>::iterator args) 
             break;
         }
         case Utils::hash ("anim"): {
-            this->anim_curve = BSpline ();
-            // TODO: Get curve from level
+            auto name = (++args)->c_str ();
+            this->anim_curve = Curves::BSpline::instanced[name];
+            this->anim_curve->genCurve (100);
+            this->anim_curve->print_curves ();
             break;
         }
         default: {

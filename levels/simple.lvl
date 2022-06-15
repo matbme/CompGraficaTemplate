@@ -25,11 +25,18 @@ def workbench -> Object {
     load "models/Survival/workbench.obj"
 }
 
+def pika -> Object {
+    load "models/Pokemon/Pikachu.obj"
+}
+
 def movement -> BSpline {
-    point 0.0 0.0 0.0
-    point 1.0 0.0 0.2
-    point 0.4 0.0 -0.2
-    point 0.0 0.0 0.0
+    point 0.261 0.0 0.865
+    point 1.257 0.0 2.822
+    point -1.899 0.0 2.492
+    point -1.835 0.0 -1.661
+    point 0.853 0.0 0.142
+    point 1.453 0.0 3.862
+    point -4.967 0.0 -0.949
 }
 
 def sun -> DirectionalLight {
@@ -50,6 +57,13 @@ def point -> PointLight {
 
 
 # add elements to scene
+
+add pika {
+    position 0.7 0.1 -0.2
+    scale 0.04 0.04 0.04
+    anim movement
+}
+
 add tree {
     position 0.1 0.0 0.0
 }
@@ -79,7 +93,6 @@ add tent {
 add workbench {
     position 0.6 0.1 0.6
     scale 0.3 0.3 0.3
-    anim movement
 }
 
 add sun

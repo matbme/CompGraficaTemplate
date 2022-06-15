@@ -1,4 +1,5 @@
 #include "Level.h"
+#include "Curves.h"
 #include "Light.h"
 #include "Utils.h"
 
@@ -67,6 +68,9 @@ std::unique_ptr<Scene> Level::load_scene_from_level(std::string level_path) {
                     .type = ElementType (hash (tokens[3].c_str ())),
                     .params = {}
                 };
+                if (scene_elements[tokens[1]].type == BSPLINE) {
+                    Curves::BSpline::create_new(tokens[1]);
+                }
                 if (tokens.back () == "{") def_block = &scene_elements[tokens[1]];
                 break;
             }
@@ -103,10 +107,17 @@ std::unique_ptr<Scene> Level::load_scene_from_level(std::string level_path) {
             }
             default: {
                 if (def_block != nullptr) { // def block param
-                    if (tokens.size() == 2) {
-                        def_block->params.push_back ({tokens[0], tokens[1]});
+                    if (def_block->type == BSPLINE) {
+                        Curves::BSpline::instanced[Curves::BSpline::last_added]->addPoint (glm::vec3 (
+                            std::strtof (tokens[1].c_str (), NULL),
+                            std::strtof (tokens[2].c_str (), NULL),
+                            std::strtof (tokens[3].c_str (), NULL)
+                        ));
                     } else {
-                        def_block->params.push_back ({tokens[0], std::move(tokens)});
+                        if (tokens.size() == 2)
+                            def_block->params.push_back ({tokens[0], tokens[1]});
+                        else
+                            def_block->params.push_back ({tokens[0], std::move(tokens)});
                     }
                 } else if (add_block.has_value()) { // add block instruction
                     switch (add_block_type) {
