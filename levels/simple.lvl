@@ -30,13 +30,10 @@ def pika -> Object {
 }
 
 def movement -> BSpline {
-    point 0.261 0.0 0.865
-    point 1.257 0.0 2.822
-    point -1.899 0.0 2.492
-    point -1.835 0.0 -1.661
-    point 0.853 0.0 0.142
-    point 1.453 0.0 3.862
-    point -4.967 0.0 -0.949
+    point 0.91 0.0 -1.4
+    point -1.448 0.0 -0.965
+    point 1.57 0.0 1.62
+    point 0.91 0.0 -1.4
 }
 
 def sun -> DirectionalLight {

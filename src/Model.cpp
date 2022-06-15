@@ -112,7 +112,6 @@ void Model::apply (std::string action, std::vector<std::string>::iterator args) 
             auto name = (++args)->c_str ();
             this->anim_curve = Curves::BSpline::instanced[name];
             this->anim_curve->genCurve (100);
-            this->anim_curve->print_curves ();
             break;
         }
         default: {

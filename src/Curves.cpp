@@ -9,8 +9,8 @@ BSpline::BSpline (std::string name) {
     float scalar = 1.0 / 6.0;
     M = glm::mat4x4 (-1,  3, -3,  1,
                       3, -6,  3,  0,
-                     -3,  0,  3,  0,
-                      1,  4,  1,  0);
+                     -3,  3,  0,  0,
+                      1,  0,  0,  0);
     M= M * scalar;
 
     BSpline::last_added = name;
@@ -35,7 +35,7 @@ void BSpline::genCurve (int resolution) {
             glm::mat4x3 G (points[i].x, points[i].y, points[i].z,
                            points[i + 1].x, points[i + 1].y, points[i + 1].z,
                            points[i + 2].x, points[i + 2].y, points[i + 2].z,
-                           points[i + 2].x, points[i + 2].y, points[i + 2].z);
+                           points[i + 2].x, points[i + 3].y, points[i + 3].z);
 
             p = G * M * T;
             curve.push_back (p);
