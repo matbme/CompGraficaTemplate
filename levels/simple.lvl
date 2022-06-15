@@ -13,6 +13,25 @@ def tree -> Object {
     load "models/Survival/tree.obj"
 }
 
+def rockFlatGrass -> Object {
+    load "models/Survival/rockFlatGrass.obj"
+}
+
+def tent -> Object {
+    load "models/Survival/tentClosed.obj"
+}
+
+def workbench -> Object {
+    load "models/Survival/workbench.obj"
+}
+
+def movement -> BSpline {
+    point 0.0 0.0 0.0
+    point 1.0 0.0 0.2
+    point 0.4 0.0 -0.2
+    point 0.0 0.0 0.0
+}
+
 def sun -> DirectionalLight {
     direction -0.2 -1.0 -0.3
     ambient 0.2 0.2 0.2
@@ -25,38 +44,46 @@ def point -> PointLight {
     diffuse 0.5 0.5 0.5
     specular 1.0 1.0 1.0
     constant 1.0
-    linear 0.09
-    quadratic 0.032
+    linear 0.7
+    quadratic 1.8
 }
 
 
 # add elements to scene
 add tree {
-    position 0.0 0.0 0.0
-    rotation 00.0 x
-    scale 0.5 0.5 0.5
+    position 0.1 0.0 0.0
 }
 
-add tree {
-    position 0.0 0.0 1.0
-    rotation 90.0 z
-    scale 1.5 1.5 1.5
+add rockFlatGrass {
+    position 0.0 0.0 0.0
+}
+
+add rockFlatGrass {
+    position 0.1 -0.1 0.8
+    rotation 90 y
+    scale 0.7 0.7 0.7
+}
+
+add rockFlatGrass {
+    position 0.6 -0.1 0.1
+    rotation -10 y
+    scale 1.2 1.2 1.2
+}
+
+add tent {
+    position 0.7 -0.05 0.1
+    rotation 65 y
+    scale 0.8 0.8 0.8
+}
+
+add workbench {
+    position 0.6 0.1 0.6
+    scale 0.3 0.3 0.3
+    anim movement
 }
 
 add sun
 
 add point {
-    position 0.7 0.2 2.0
-}
-
-add point {
-    position 2.3 -3.3 -4.0
-}
-
-add point {
-    position -4.0 2.0 -12.0
-}
-
-add point {
-    position 0.0 0.0 -3.0
+    position 0.7 0.2 -0.2
 }

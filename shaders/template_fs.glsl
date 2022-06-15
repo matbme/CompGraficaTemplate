@@ -36,7 +36,7 @@ in vec2 TexCoords;
 flat in int Highlight;
 flat in int IsTextured;
 
-#define N_POINT_LIGHTS 4
+#define N_POINT_LIGHTS 1
 uniform PointLight pointLights[N_POINT_LIGHTS];
 uniform DirectionalLight dirLight;
 uniform Material material;

@@ -7,10 +7,11 @@
 #include <variant>
 
 namespace Level {
-enum ElementType : int {
+enum ElementType : unsigned int {
     OBJ   = Utils::hash ("Object"),
     DIRLIGHT = Utils::hash ("DirectionalLight"),
-    POINTLIGHT = Utils::hash ("PointLight")
+    POINTLIGHT = Utils::hash ("PointLight"),
+    BSPLINE = Utils::hash ("BSpline")
 };
 
 struct Element {

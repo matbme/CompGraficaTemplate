@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Mesh.h"
+#include "Curves.h"
 #include "Material.h"
 
 class Model {
@@ -25,6 +26,8 @@ public:
     void remove_highlight ();
 
     void apply (std::string action, std::vector<std::string>::iterator args);
+
+    BSpline anim_curve;
 
     void update ();
 

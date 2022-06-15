@@ -98,6 +98,11 @@ void Model::apply (std::string action, std::vector<std::string>::iterator args) 
             ));
             break;
         }
+        case Utils::hash ("anim"): {
+            this->anim_curve = BSpline ();
+            // TODO: Get curve from level
+            break;
+        }
         default: {
             throw std::invalid_argument ("Object has no action `" + action + "`.");
         }

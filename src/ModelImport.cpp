@@ -14,6 +14,10 @@ void ModelImporter::Obj::import (Object *obj) {
     std::vector<glm::vec3> temp_vertex_norm;
     std::vector<glm::vec2> temp_vertex_tex;
 
+    std::vector<glm::vec3> prev_temp_vertex_pos;
+    std::vector<glm::vec3> prev_temp_vertex_norm;
+    std::vector<glm::vec2> prev_temp_vertex_tex;
+
     std::string path = obj->get_model_filename ();
 
     std::ifstream file (path);
@@ -59,8 +63,17 @@ void ModelImporter::Obj::import (Object *obj) {
                 break;
             }
             case hash ("g"): { // New group
-                if (tokens[1] != "off")
+                if (tokens[1] != "off") {
+                    prev_temp_vertex_pos.swap (temp_vertex_pos);
+                    prev_temp_vertex_norm.swap (temp_vertex_norm);
+                    prev_temp_vertex_tex.swap (temp_vertex_tex);
+
+                    temp_vertex_pos.clear ();
+                    temp_vertex_norm.clear ();
+                    temp_vertex_tex.clear ();
+
                     new_mesh = true;
+                }
                 break;
             }
             case hash ("usemtl"): { // Use material for mesh
@@ -82,6 +95,12 @@ void ModelImporter::Obj::import (Object *obj) {
                 break;
             }
             case hash ("f"): { // Face
+                if (temp_vertex_pos.empty()) {
+                    temp_vertex_pos = prev_temp_vertex_pos;
+                    temp_vertex_norm = prev_temp_vertex_norm;
+                    temp_vertex_tex = prev_temp_vertex_tex;
+                }
+
                 for (int i = 1 ; i <= 3 ; i++) {
                     auto [model_ptr, pos] = ModelImporter::Obj::_add_vertex (
                             tokens[i],

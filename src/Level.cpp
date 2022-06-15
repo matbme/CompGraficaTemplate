@@ -91,6 +91,7 @@ std::unique_ptr<Scene> Level::load_scene_from_level(std::string level_path) {
                         add_block_type = scene_elements[tokens[1]].type;
                         break;
                     }
+                    default: break;
                 }
                 break;
             }
@@ -110,17 +111,27 @@ std::unique_ptr<Scene> Level::load_scene_from_level(std::string level_path) {
                 } else if (add_block.has_value()) { // add block instruction
                     switch (add_block_type) {
                         case OBJ: {
-                            Level::_set_parameter_for_element<Object> (*std::any_cast<Object*> (add_block), tokens[0], tokens.begin ());
+                            Level::_set_parameter_for_element<Object> (
+                                    *std::any_cast<Object*> (add_block),
+                                    tokens[0],
+                                    tokens.begin ());
                             break;
                         }
                         case DIRLIGHT: {
-                            Level::_set_parameter_for_element<DirectionalLight> (*std::any_cast<DirectionalLight*> (add_block), tokens[0], tokens.begin ());
+                            Level::_set_parameter_for_element<DirectionalLight> (
+                                    *std::any_cast<DirectionalLight*> (add_block),
+                                    tokens[0],
+                                    tokens.begin ());
                             break;
                         }
                         case POINTLIGHT: {
-                            Level::_set_parameter_for_element<PointLight> (*std::any_cast<PointLight*> (add_block), tokens[0], tokens.begin ());
+                            Level::_set_parameter_for_element<PointLight> (
+                                    *std::any_cast<PointLight*> (add_block),
+                                    tokens[0],
+                                    tokens.begin ());
                             break;
                         }
+                        default: break;
                     }
                 } else { // Invalid token
                     std::cout << "Unprocessed token: " << tokens[0] << std::endl;
