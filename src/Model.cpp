@@ -110,7 +110,7 @@ void Model::apply (std::string action, std::vector<std::string>::iterator args) 
         }
         case Utils::hash ("anim"): {
             auto name = (++args)->c_str ();
-            this->anim_curve = Curves::BSpline::instanced[name];
+            this->anim_curve = Curves::Bezier::instanced[name];
             this->anim_curve->genCurve (100);
             break;
         }

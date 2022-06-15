@@ -28,7 +28,7 @@ public:
 
     void apply (std::string action, std::vector<std::string>::iterator args);
 
-    std::shared_ptr<Curves::BSpline> anim_curve;
+    std::shared_ptr<Curves::Bezier> anim_curve;
     int anim_frame = 0;
 
     void update ();

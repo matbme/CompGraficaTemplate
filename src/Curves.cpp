@@ -3,7 +3,7 @@
 
 using namespace Curves;
 
-BSpline::BSpline (std::string name) {
+Bezier::Bezier (std::string name) {
     this->name = name;
 
     float scalar = 1.0 / 6.0;
@@ -13,18 +13,18 @@ BSpline::BSpline (std::string name) {
                       1,  0,  0,  0);
     M= M * scalar;
 
-    BSpline::last_added = name;
+    Bezier::last_added = name;
 }
 
-void BSpline::create_new (std::string name) {
-    BSpline::instanced[name] = std::make_shared<BSpline> (name);
+void Bezier::create_new (std::string name) {
+    Bezier::instanced[name] = std::make_shared<Bezier> (name);
 }
 
-BSpline::~BSpline () {
-    BSpline::instanced.erase(this->name);
+Bezier::~Bezier () {
+    Bezier::instanced.erase(this->name);
 }
 
-void BSpline::genCurve (int resolution) {
+void Bezier::genCurve (int resolution) {
     float step = 1.0 / (float) resolution;
     float t = 0;
 
@@ -43,5 +43,5 @@ void BSpline::genCurve (int resolution) {
     }
 }
 
-std::map<std::string, std::shared_ptr<Curves::BSpline>> BSpline::instanced = {};
-std::string BSpline::last_added = "";
+std::map<std::string, std::shared_ptr<Curves::Bezier>> Bezier::instanced = {};
+std::string Bezier::last_added = "";

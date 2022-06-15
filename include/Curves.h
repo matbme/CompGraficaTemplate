@@ -14,10 +14,10 @@
 #include <vector>
 
 namespace Curves {
-class BSpline {
+class Bezier {
 public:
-    BSpline (std::string name);
-    ~BSpline ();
+    Bezier (std::string name);
+    ~Bezier ();
 
     static void create_new (std::string name);
 
@@ -33,7 +33,7 @@ public:
             "Z: " << point.z << std::endl;
     }
 
-    static std::map<std::string, std::shared_ptr<Curves::BSpline>> instanced;
+    static std::map<std::string, std::shared_ptr<Curves::Bezier>> instanced;
     static std::string last_added;
 
     std::vector<glm::vec3> curve;

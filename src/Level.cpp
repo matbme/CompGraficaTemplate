@@ -68,8 +68,8 @@ std::unique_ptr<Scene> Level::load_scene_from_level(std::string level_path) {
                     .type = ElementType (hash (tokens[3].c_str ())),
                     .params = {}
                 };
-                if (scene_elements[tokens[1]].type == BSPLINE) {
-                    Curves::BSpline::create_new(tokens[1]);
+                if (scene_elements[tokens[1]].type == BEZIER) {
+                    Curves::Bezier::create_new(tokens[1]);
                 }
                 if (tokens.back () == "{") def_block = &scene_elements[tokens[1]];
                 break;
@@ -107,8 +107,8 @@ std::unique_ptr<Scene> Level::load_scene_from_level(std::string level_path) {
             }
             default: {
                 if (def_block != nullptr) { // def block param
-                    if (def_block->type == BSPLINE) {
-                        Curves::BSpline::instanced[Curves::BSpline::last_added]->addPoint (glm::vec3 (
+                    if (def_block->type == BEZIER) {
+                        Curves::Bezier::instanced[Curves::Bezier::last_added]->addPoint (glm::vec3 (
                             std::strtof (tokens[1].c_str (), NULL),
                             std::strtof (tokens[2].c_str (), NULL),
                             std::strtof (tokens[3].c_str (), NULL)
