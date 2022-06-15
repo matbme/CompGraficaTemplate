@@ -75,18 +75,21 @@ add tree {
 
 add rockFlatGrass {
     position 0.0 0.0 0.0
+    cull
 }
 
 add rockFlatGrass {
     position 0.1 -0.1 0.8
     rotation 90 y
     scale 0.7 0.7 0.7
+    cull
 }
 
 add rockFlatGrass {
     position 0.6 -0.1 0.1
     rotation -10 y
     scale 1.2 1.2 1.2
+    cull
 }
 
 add tent {

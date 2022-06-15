@@ -53,6 +53,8 @@ public:
     std::vector<Texture> textures;
     std::shared_ptr<Material> material;
 
+    bool cull = false;
+
     void setup ();
     void draw ();
 

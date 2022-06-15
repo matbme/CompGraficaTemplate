@@ -114,6 +114,11 @@ void Model::apply (std::string action, std::vector<std::string>::iterator args) 
             this->anim_curve->genCurve (100);
             break;
         }
+        case Utils::hash ("cull"): {
+            for (auto & mesh : this->meshes)
+                mesh.cull = true;
+            break;
+        }
         default: {
             throw std::invalid_argument ("Object has no action `" + action + "`.");
         }

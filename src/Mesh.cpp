@@ -91,9 +91,11 @@ void Mesh::draw () {
         this->shader->setFloat ("material.illum", this->material->get_illum ());
     }
 
+    if (cull) glEnable (GL_CULL_FACE);
     glBindVertexArray (VAO);
     glDrawElements (GL_TRIANGLES, indices.size (), GL_UNSIGNED_INT, 0);
     glBindVertexArray (0);
+    if (cull) glDisable (GL_CULL_FACE);
 }
 
 void Mesh::setShader (std::shared_ptr<Shader> shader) {

@@ -158,9 +158,6 @@ void Scene::setupCamera () {
     glEnable(GL_BLEND);
     glEnable(GL_FRAMEBUFFER_SRGB);
 
-    // Enable face culling
-    glEnable (GL_CULL_FACE);
-
     Camera::scene_width = &Scene::window_width;
     Camera::scene_height = &Scene::window_height;
     Camera::proj_mat = &this->projection;
